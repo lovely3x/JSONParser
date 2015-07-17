@@ -92,12 +92,12 @@ public class JSONFormatterImpl implements JSONFormatter {
                     sb.append(newLine);
                     sb.append(addSpace(level)).append(block);
                     sb.append('"').append(key.getKey()).append('"').append(' ').append(':').append(' ');
-                    sb.append(value.getString()).append(i + 1 == count ? "" : ",");
+                    sb.append(value.getString().trim()).append(i + 1 == count ? "" : ",");
                     break;
                 case JSONType.JSON_TYPE_STRING://
                     sb.append(newLine);
                     sb.append(addSpace(level)).append(block);
-                    sb.append('"').append(key.getKey()).append('"').append(' ').append(':').append(' ').append('"').append(value.getString()).append('"').append(i + 1 == count ? "" : ",");
+                    sb.append('"').append(key.getKey()).append('"').append(' ').append(':').append(' ').append('"').append(value.getString().trim()).append('"').append(i + 1 == count ? "" : ",");
                     break;
                 case JSONType.JSON_TYPE_NULL://null
                     sb.append(newLine);

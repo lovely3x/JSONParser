@@ -1,0 +1,9 @@
+<component name="ArtifactManager">
+  <artifact type="jar" build-on-make="true" name="command:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/command_jar</output-path>
+    <root id="archive" name="command.jar">
+      <element id="module-output" name="command" />
+      <element id="module-output" name="core" />
+    </root>
+  </artifact>
+</component>
