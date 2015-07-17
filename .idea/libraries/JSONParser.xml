@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="JSONParser">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/out/artifacts/JSONParser_jar/JSONParser.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
