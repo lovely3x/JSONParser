@@ -1,8 +1,0 @@
-<component name="ArtifactManager">
-  <artifact type="jar" build-on-make="true" name="JSONParser:jar">
-    <output-path>$PROJECT_DIR$/out/artifacts/JSONParser_jar</output-path>
-    <root id="archive" name="JSONParser.jar">
-      <element id="module-output" name="JSONParser" />
-    </root>
-  </artifact>
-</component>

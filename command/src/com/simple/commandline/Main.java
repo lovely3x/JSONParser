@@ -1,4 +1,4 @@
-package com.lovely3x.jsonparser.sample;
+package com.simple.commandline;
 
 import com.lovely3x.jsonparser.JSONType;
 import com.lovely3x.jsonparser.formatter.JSONFormatterImpl;
@@ -94,7 +94,7 @@ public class Main {
                     printHelp();
                     break;
                 default:
-                    System.console().printf("\n不能识别的指令\n");
+                    System.out.printf("\n不能识别的指令\n");
                     break;
             }
         }
@@ -113,11 +113,11 @@ public class Main {
         if (list.contains(ENTRY_PATH)) {//使用路径
             int index = list.indexOf(ENTRY_PATH) + 1;
             if (index >= list.size()) {//
-                System.console().printf("\n你需要指定JSON资源的路径\n");
+                System.out.printf("\n你需要指定JSON资源的路径\n");
             } else {
                 File jsonFile = new File(list.get(index));
                 if (!jsonFile.exists()) {//如果文件不存在
-                    System.console().printf("\n你指定JSON资源的路径是无效的\n");
+                    System.out.printf("\n你指定JSON资源的路径是无效的\n");
                 } else {
                     try {
                         FileInputStream fos = new FileInputStream(jsonFile);
@@ -131,7 +131,7 @@ public class Main {
             if (list.contains(ENTRY_STRING)) {//使用字符串
                 int index = list.indexOf(ENTRY_STRING) + 1;
                 if (index >= list.size()) {
-                    System.console().printf("\n你指定JSON资源是无效的\n");
+                    System.out.printf("\n你指定JSON资源是无效的\n");
                 } else {
                     source = new JSONSourcImpl(list.get(index));
                 }
@@ -161,7 +161,7 @@ public class Main {
                 if (list.contains(OUT_PATH)) {
                     int index = list.indexOf(OUT_PATH) + 1;
                     if (index >= list.size()) {
-                        System.console().printf("\n没有指定的输出路径\n");
+                        System.out.printf("\n没有指定的输出路径\n");
                     } else {
                         File f = new File(list.get(index));
                         if (f.exists()) {
@@ -175,23 +175,23 @@ public class Main {
                                 try {
                                     fos.close();
                                 } catch (Exception e) {
-                                    System.console().printf("\n警告: 文件未被正确关闭\n");
+                                    System.out.printf("\n警告: 文件未被正确关闭\n");
                                 }
-                                System.console().printf("\n成功\n");
+                                System.out.printf("\n成功\n");
                             } else {
-                                System.console().printf("\n输出失败,请确保制定的输出是有效的并且检查是否已经指定权限\n");
+                                System.out.printf("\n输出失败,请确保制定的输出是有效的并且检查是否已经指定权限\n");
                             }
                         } catch (Exception e) {
-                            System.console().printf("\n输出失败,请确保制定的输出是有效的\n");
+                            System.out.printf("\n输出失败,请确保制定的输出是有效的\n");
                         }
                     }
                 } else {
-                    System.console().printf("\n\n");
-                    System.console().printf(formatResult);
-                    System.console().printf("\n\n");
+                    System.out.printf("\n\n");
+                    System.out.printf(formatResult);
+                    System.out.printf("\n\n");
                 }
             } else {
-                System.console().printf("\n格式化失败\n");
+                System.out.printf("\n格式化失败\n");
             }
         }
 
@@ -214,15 +214,15 @@ public class Main {
         if (list.contains(ENTRY_PATH)) {//使用路径
             int index = list.indexOf(ENTRY_PATH) + 1;
             if (index >= list.size()) {//
-                System.console().printf("\n你需要指定JSON资源的路径\n");
+                System.out.printf("\n你需要指定JSON资源的路径\n");
             } else {
                 File jsonFile = new File(list.get(index));
                 if (!jsonFile.exists()) {//如果文件不存在
-                    System.console().printf("\n你指定JSON资源的路径是无效的\n");
+                    System.out.printf("\n你指定JSON资源的路径是无效的\n");
                 } else {
                     try {
                         if (jsonFile.isDirectory()) {
-                            System.console().printf("\n你指定的JSON资源路径是一个文件夹,这是不正确的,你应该指定一个文件\n");
+                            System.out.printf("\n你指定的JSON资源路径是一个文件夹,这是不正确的,你应该指定一个文件\n");
                         } else {
                             FileInputStream fos = new FileInputStream(jsonFile);
                             source = new JSONSourcImpl(fos, charset);
@@ -270,35 +270,35 @@ public class Main {
                             fos.close();
                             baos.close();
                         } catch (Exception e) {
-                            System.console().printf("\n警告: 文件未被正确关闭\n");
+                            System.out.printf("\n警告: 文件未被正确关闭\n");
                         }
-                        System.console().printf("\n成功\n");
+                        System.out.printf("\n成功\n");
                     } catch (Exception e) {
-                        System.console().printf("\n输出失败,请确保制定的输出是有效的\n");
+                        System.out.printf("\n输出失败,请确保制定的输出是有效的\n");
                     }
 
 
                 } else {
-                    System.console().printf("\n\n");
+                    System.out.printf("\n\n");
                     try {
-                        System.console().printf(new String(baos.toByteArray(), charset));
+                        System.out.printf(new String(baos.toByteArray(), charset));
                     } catch (UnsupportedEncodingException e) {
                         try {
-                            System.console().printf("警告:你指定的编码可能无效,尝试使用默认的 UTF-8 编码\n");
-                            System.console().printf("\n\n");
-                            System.console().printf(new String(baos.toByteArray(), DEFAULT_CHARSET));
+                            System.out.printf("警告:你指定的编码可能无效,尝试使用默认的 UTF-8 编码\n");
+                            System.out.printf("\n\n");
+                            System.out.printf(new String(baos.toByteArray(), DEFAULT_CHARSET));
                         } catch (UnsupportedEncodingException e1) {
-                            System.console().printf("\n类创建失败\n");
+                            System.out.printf("\n类创建失败\n");
                             e1.printStackTrace();
                         }
                     }
-                    System.console().printf("\n\n");
+                    System.out.printf("\n\n");
                 }
             } else {
-                System.console().printf("\n类创建失败,可能是你的JSON数据源不符合规范或者你的你的JSON是一个JSONArray\n");
+                System.out.printf("\n类创建失败,可能是你的JSON数据源不符合规范或者你的你的JSON是一个JSONArray\n");
             }
         } else {
-            System.console().printf("\n类创建失败,可能是你的JSON数据源不符合规范或者你的你的JSON是一个JSONArray\n");
+            System.out.printf("\n类创建失败,可能是你的JSON数据源不符合规范或者你的你的JSON是一个JSONArray\n");
         }
     }
 
@@ -338,7 +338,7 @@ public class Main {
         sb.append("\n").append("如果你需要根据一个JSON对象创建一个类,你可以这样做 %s [%s][%s] ");
         sb.append("\n代表什么 ? \n").append(" %s 表示是进行类创建\n %s 输出的文件的位置,如果未指定,则直接输出到控制台\n %s 指定数据源为文件");
         sb.append("\n\n");
-        System.console().printf(sb.toString(),
+        System.out.printf(sb.toString(),
                 HELP,
                 FORMAT, ENTRY_PATH, OUT_PATH,
                 FORMAT, ENTRY_PATH, OUT_PATH,

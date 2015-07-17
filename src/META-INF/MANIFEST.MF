@@ -1,9 +1,0 @@
-<<<<<<< HEAD
-Manifest-Version: 1.0
-Main-Class: com.lovely3x.jsonparser.sample.Main
-
-=======
-Manifest-Version: 1.0
-Main-Class: com.lovely3x.jsonparser.sample.Main
-
->>>>>>> 16716a0... 首次上传

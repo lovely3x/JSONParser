@@ -530,7 +530,7 @@ public class JSONObject {
         if (clazzFields == null || clazzFields.length == 0) {
             throw new IllegalArgumentException("Clazz must contain one or more field.");
         }
-        return (T) creator.create(this, clazz, matcher);
+        return creator.create(this, clazz, matcher);
     }
 
 
@@ -551,7 +551,7 @@ public class JSONObject {
         if (clazzFields == null || clazzFields.length == 0) {
             throw new IllegalArgumentException("Clazz must contain one or more field.");
         }
-        return (T) creator.create(this, clazz, new UnderlineMatcher());
+        return creator.create(this, clazz, new UnderlineMatcher());
     }
 
     /**
@@ -588,7 +588,7 @@ public class JSONObject {
         if (clazzFields == null || clazzFields.length == 0) {
             throw new IllegalArgumentException("Clazz must contain one or more field.");
         }
-        return (T) new ObjectCreatorImpl<T>().create(this, clazz, matcher);
+        return new ObjectCreatorImpl<T>().create(this, clazz, matcher);
     }
 
     /**

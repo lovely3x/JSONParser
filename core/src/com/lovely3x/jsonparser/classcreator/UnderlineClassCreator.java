@@ -169,11 +169,7 @@ public class UnderlineClassCreator implements ClassCreator {
         if (!name) return false;
         else {
             //如果包含全限定名则认为,可以添加
-            if (fields.containsValue(qualifiedName)) {
-                return false;
-            } else {
-                return true;
-            }
+            return !fields.containsValue(qualifiedName);
         }
     }
 
