@@ -2,7 +2,7 @@ package com.lovely3x.jsonparser;
 
 /**
  * Created by lovely3x on 15-6-29.
- * json 结构符合
+ * json 结构符号
  */
 public class JSONStructuralType {
 

@@ -16,7 +16,6 @@ import java.io.FileOutputStream;
  * @author lovely3x
  * @version 1.0
  * @time 2015-7-18 上午1:40:45
- * @Description: {}
  */
 public class GUIMain extends JFrame {
 

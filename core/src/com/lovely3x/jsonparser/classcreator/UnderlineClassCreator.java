@@ -13,6 +13,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
+ * 下划线类创建器
  * Created by lovely3x on 15-7-2.
  */
 public class UnderlineClassCreator implements ClassCreator {
@@ -279,9 +280,6 @@ public class UnderlineClassCreator implements ClassCreator {
         return sb;
     }
 
-    private void addToClass(StringBuilder sb, String str) {
-
-    }
 
     /**
      * 创建类尾
