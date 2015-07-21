@@ -46,7 +46,7 @@ public class JSONValueImpl implements JSONValue {
      *
      * @return
      */
-    private String processString(String key) {
+    protected String processString(String key) {
         StringBuilder sb = new StringBuilder(key);
         if (key.startsWith("\"") && key.endsWith("\"")) {
             sb.deleteCharAt(0);
@@ -76,10 +76,11 @@ public class JSONValueImpl implements JSONValue {
      * @param originalString
      * @return
      */
-    private String filter(String originalString) {
+    protected String filter(String originalString) {
         if (originalString == null) return null;
         return originalString.trim();
     }
+
 
     @Override
     public int getInt() {
