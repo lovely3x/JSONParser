@@ -1,7 +1,10 @@
 package com.simple.gui;
 
 import com.lovely3x.jsonparser.JSONType;
-import com.lovely3x.jsonparser.model.JSONValueImpl;
+import com.lovely3x.jsonparser.log.Log;
+import com.lovely3x.jsonparser.model.*;
+import com.lovely3x.jsonparser.source.JSONSourcImpl;
+import com.lovely3x.jsonparser.source.JSONSource;
 
 import javax.swing.*;
 import java.awt.*;
@@ -152,6 +155,54 @@ public class GUIMain extends JFrame {
     }
 
     public static void main(String[] args) {
+        //字符串差异去除
+        //diffTest();
+        //gui程序
         new GUIMain();
     }
+
+    private static void diffTest(){
+        String json = "{\"hello\":\"120\"}";
+        JSONObject jo = new JSONObject(new JSONSourcImpl(json), new IgnoreStringDiffJSONPairFactory());
+        String hello = jo.getString("hello");
+    }
+
+
+    /**
+     * 忽略字符串和数值型的差异,简单的来说就是在转换前先将 字符串的两个双引号去掉
+     * 使得 \"12\" 可以变化为 int 型的 12
+     */
+    private static class IgnoreStringDiffJSONPairFactory extends JSONPairFactoryImpl {
+
+        @Override
+        public JSONValue getJSONValue(String value) {
+            return new IgnoreStringDiffJSONValue(value);
+        }
+
+        /**
+         * 忽略字符串和数值类型的差异
+         * 假设 现在有一字符串Ａ为　"100"
+         * 由于是字符串型的所以如果正常情况下使用getInt(A);就会出现解析错误
+         * 但是如果使用这个的话就会先去掉这个 A 的左右字符串(各一次) 再转换
+         */
+        public static final class IgnoreStringDiffJSONValue extends JSONValueImpl {
+
+            /**
+             * 通过指定的值创建JSONValue对象
+             *
+             * @param value
+             */
+            public IgnoreStringDiffJSONValue(String value) {
+                super(value);
+            }
+
+            @Override
+            protected String filter(String originalString) {
+                //这就是这个类的关键所在,去除掉了字符串的两边的引号(各一次)如果需要
+                return processString(super.filter(originalString));
+            }
+        }
+    }
+
+
 }
