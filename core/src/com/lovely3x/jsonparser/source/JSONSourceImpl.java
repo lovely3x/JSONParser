@@ -9,7 +9,7 @@ import java.io.UnsupportedEncodingException;
  * Created by lovely3x on 15-6-29.
  * json 数据源 字符串提供者默认实现类
  */
-public class JSONSourcImpl implements JSONSource {
+public class JSONSourceImpl implements JSONSource {
 
     /**
      * 默认的编码方式
@@ -26,7 +26,7 @@ public class JSONSourcImpl implements JSONSource {
      *
      * @param string
      */
-    public JSONSourcImpl(String string) {
+    public JSONSourceImpl(String string) {
         this.input = string;
     }
 
@@ -35,7 +35,7 @@ public class JSONSourcImpl implements JSONSource {
      *
      * @param buf
      */
-    public JSONSourcImpl(byte[] buf) throws UnsupportedEncodingException {
+    public JSONSourceImpl(byte[] buf) throws UnsupportedEncodingException {
         this.input = new String(buf, DEFAULT_CHARSET);
     }
 
@@ -43,7 +43,7 @@ public class JSONSourcImpl implements JSONSource {
      * @param buf     使用一个byte数组 作为json输入源
      * @param charset 指定byte[]转换为String的编码方式
      */
-    public JSONSourcImpl(byte[] buf, String charset) throws UnsupportedEncodingException {
+    public JSONSourceImpl(byte[] buf, String charset) throws UnsupportedEncodingException {
         this.input = new String(buf, charset);
     }
 
@@ -51,7 +51,7 @@ public class JSONSourcImpl implements JSONSource {
      * @param stream 使用一个InputStream数组 作为json输入源
      *               使用默认的编码方式 UTF-8
      */
-    public JSONSourcImpl(InputStream stream) throws IOException {
+    public JSONSourceImpl(InputStream stream) throws IOException {
         this.input = streamToString(stream, DEFAULT_CHARSET);
     }
 
@@ -59,7 +59,7 @@ public class JSONSourcImpl implements JSONSource {
      * @param stream  使用一个InputStream数组 作为json输入源
      * @param charset 使用指定的编码方式
      */
-    public JSONSourcImpl(InputStream stream, String charset) throws IOException {
+    public JSONSourceImpl(InputStream stream, String charset) throws IOException {
         this.input = streamToString(stream, charset);
     }
 
