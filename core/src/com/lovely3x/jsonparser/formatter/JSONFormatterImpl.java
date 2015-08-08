@@ -140,6 +140,7 @@ public class JSONFormatterImpl implements JSONFormatter {
         final int count = array.length();
         for (int i = 0; i < count; i++) {
             JSONValue value = array.getValue(i);
+            //System.out.println("value == " +value);
             switch (value.guessType()) {
                 case JSONType.JSON_TYPE_ARRAY://array
                     sb.append(newLine);
@@ -165,7 +166,7 @@ public class JSONFormatterImpl implements JSONFormatter {
                 case JSONType.JSON_TYPE_STRING://
                     sb.append(newLine);
                     sb.append(addSpace(level)).append(block);
-                    sb.append(value.getString()).append('"').append(i + 1 == count ? "" : ",");
+                    sb.append('"').append(value.getString()).append('"').append(i + 1 == count ? "" : ",");
                     break;
                 case JSONType.JSON_TYPE_NULL://null
                     sb.append(newLine);

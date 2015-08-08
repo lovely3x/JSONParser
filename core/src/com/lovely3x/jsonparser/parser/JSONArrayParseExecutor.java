@@ -1,8 +1,10 @@
 package com.lovely3x.jsonparser.parser;
 
 import com.lovely3x.jsonparser.JSONStructuralType;
+import com.lovely3x.jsonparser.JSONType;
 import com.lovely3x.jsonparser.model.Stack;
 import com.lovely3x.jsonparser.source.JSONSource;
+import com.lovely3x.jsonparser.utils.CommonUtils;
 
 /**
  * Created by lovely3x on 15-6-30.
@@ -28,6 +30,7 @@ public class JSONArrayParseExecutor {
         //找到开始符号和结束符号
         final char leftBoundSymbol = JSONStructuralType.STRUCTURAL_LEFT_SQUARE_BRACKET;
         final char rightBoundSymbol = JSONStructuralType.STRUCTURAL_RIGHT_SQUARE_BRACKET;
+
         //定义起始位置和结束位置
         final int count = sourceString.lastIndexOf(String.valueOf(rightBoundSymbol));
         final int startPosition = sourceString.indexOf(String.valueOf(leftBoundSymbol)) + 1;
@@ -60,11 +63,14 @@ public class JSONArrayParseExecutor {
         //转义字符栈
         Stack<Character> escapeStack = new Stack<>();
 
-        //上一个操作字符
-        //  int preOperatingCharactorIndex = -1;
-        //上一个操作字符的下标
+        //引号栈
+        Stack<Character> quoteStack = new Stack<>();
+        //引号下标栈
+        Stack<Integer> indexOfQuoteStack = new Stack<>();
 
+        //上一个操作字符
         char preOperatingCharacter = JSONStructuralType.STRUCTURAL_INVALIDATE;
+
         for (int i = startPosition; i < count; i++) {
             //Log.e("","leftSquare stack " + leftSquareBracket);
             char currentChar = sourceString.charAt(i);
@@ -139,9 +145,15 @@ public class JSONArrayParseExecutor {
                     break;
                 case JSONStructuralType.STRUCTURAL_COMMA://逗号
                     //没有进行数据采集
-                    if (leftCurlyBracket.size() == 0 && leftSquareBracket.size() == 0) {
+                    if (leftCurlyBracket.size() == 0
+                            && leftSquareBracket.size() == 0
+                            && quoteStack.size() % 2 == 0
+                            ) {
+
                         //如果上一个操作符号不是对象或数组
-                        if (preOperatingCharacter != JSONStructuralType.STRUCTURAL_RIGHT_CURLY_BRACKET && preOperatingCharacter != JSONStructuralType.STRUCTURAL_RIGHT_SQUARE_BRACKET) {
+                        if (preOperatingCharacter != JSONStructuralType.STRUCTURAL_RIGHT_CURLY_BRACKET
+                                && preOperatingCharacter != JSONStructuralType.STRUCTURAL_RIGHT_SQUARE_BRACKET
+                                && preOperatingCharacter != JSONStructuralType.QUOTE) {
                             if (commaStack.size() == 0) {//第一个元素
                                 callback.onParsed(sourceString.substring(startPosition, i));
                             } else {
@@ -154,10 +166,35 @@ public class JSONArrayParseExecutor {
                         // preOperatingCharactorIndex = i;
                     }
                     break;
+                case JSONStructuralType.QUOTE://引号
+                    if (leftCurlyBracket.size() == 0 && leftSquareBracket.size() == 0) {
+                        //上一个不是转义符号
+                        if (preOperatingCharacter != JSONStructuralType.ESCAPE) {
+                            preOperatingCharacter = JSONStructuralType.QUOTE;
+                            quoteStack.push(currentChar);
+                            indexOfQuoteStack.push(i);
+
+                            //如果已经存在两个非转义引号了(有一对了啊)
+                            if (quoteStack.size() % 2 == 0) {
+                                callback.onParsed(sourceString.substring(
+                                        indexOfQuoteStack.get(
+                                                indexOfQuoteStack.size() - 2),
+                                        indexOfQuoteStack.get(indexOfQuoteStack.size() - 1) + 1));
+                                //quoteStack.clear();
+                                //indexOfQuoteStack.clear();
+                            }
+                        }
+                    }
+                    break;
             }
 
+            //    Log.e("JSONArrayParseExecutor", "commaStack -> " + commaStack);
             //末尾,可能存在数据
-            if (i + 1 == count && leftCurlyBracket.size() == 0 && leftSquareBracket.size() == 0 && indexOfCommaStack.size() > 0) {
+            if (i + 1 == count
+                    && leftCurlyBracket.size() == 0
+                    && leftSquareBracket.size() == 0
+                    && quoteStack.size() % 2 == 0
+                    && indexOfCommaStack.size() > 0) {
                 char lastChar = preOperatingCharacter;
                 switch (lastChar) {
                     case JSONStructuralType.STRUCTURAL_RIGHT_SQUARE_BRACKET:
@@ -166,6 +203,26 @@ public class JSONArrayParseExecutor {
                     default:
                         callback.onParsed(sourceString.substring(indexOfCommaStack.get(indexOfCommaStack.size() - 1) + 1, count));
                         break;
+                }
+            }
+            //修复#2 Issue
+            if (i + 1 == count) {
+                if (/*leftCurlyBracket.size() == 0
+                        && leftSquareBracket.size() == 0
+                        && quoteStack.size() % 2 == 0
+                        && */preOperatingCharacter == JSONStructuralType.STRUCTURAL_INVALIDATE
+                        ) {
+                    String str = sourceString.substring(startPosition + 1, count);
+                    switch (CommonUtils.guessType(str)) {
+                        case JSONType.JSON_TYPE_NULL:
+                        case JSONType.JSON_TYPE_BOOLEAN:
+                        case JSONType.JSON_TYPE_INT:
+                        case JSONType.JSON_TYPE_LONG:
+                        case JSONType.JSON_TYPE_FLOAT:
+                        case JSONType.JSON_TYPE_DOUBLE:
+                            callback.onParsed(str);
+                            break;
+                    }
                 }
             }
         }

@@ -12,8 +12,8 @@ import com.lovely3x.jsonparser.objectcreator.ObjectCreator;
 import com.lovely3x.jsonparser.objectcreator.ObjectCreatorImpl;
 import com.lovely3x.jsonparser.parser.JSONParser;
 import com.lovely3x.jsonparser.parser.JSONParserImpl;
-import com.lovely3x.jsonparser.source.JSONSourcImpl;
 import com.lovely3x.jsonparser.source.JSONSource;
+import com.lovely3x.jsonparser.source.JSONSourceImpl;
 import com.lovely3x.jsonparser.source.ListJSONSource;
 
 import java.util.ArrayList;
@@ -60,7 +60,7 @@ public class JSONArray {
      * @param source
      */
     public JSONArray(String source) {
-        this(new JSONSourcImpl(source));
+        this(new JSONSourceImpl(source));
     }
 
     /**

@@ -13,6 +13,8 @@ public class Stack<T> {
 
     private static final String TAG = "Stack";
 
+    private static final int DEFAULT_CAPACITY = 0x5;
+
     /**
      * 增量因子
      */
@@ -34,7 +36,7 @@ public class Stack<T> {
      * @param capacity
      */
     public Stack(int capacity) {
-        stack = new Object[capacity];
+        this(DEFAULT_FACTOR, capacity);
     }
 
     /**
@@ -43,7 +45,7 @@ public class Stack<T> {
      * @param factor
      */
     public Stack(float factor) {
-        this.factor = factor;
+        this(factor, DEFAULT_CAPACITY);
     }
 
     /**

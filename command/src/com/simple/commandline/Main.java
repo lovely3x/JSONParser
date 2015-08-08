@@ -5,8 +5,8 @@ import com.lovely3x.jsonparser.formatter.JSONFormatterImpl;
 import com.lovely3x.jsonparser.log.Log;
 import com.lovely3x.jsonparser.model.JSONValue;
 import com.lovely3x.jsonparser.model.JSONValueImpl;
-import com.lovely3x.jsonparser.source.JSONSourcImpl;
 import com.lovely3x.jsonparser.source.JSONSource;
+import com.lovely3x.jsonparser.source.JSONSourceImpl;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -121,7 +121,7 @@ public class Main {
                 } else {
                     try {
                         FileInputStream fos = new FileInputStream(jsonFile);
-                        source = new JSONSourcImpl(fos, charset);
+                        source = new JSONSourceImpl(fos, charset);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -133,7 +133,7 @@ public class Main {
                 if (index >= list.size()) {
                     System.out.printf("\n你指定JSON资源是无效的\n");
                 } else {
-                    source = new JSONSourcImpl(list.get(index));
+                    source = new JSONSourceImpl(list.get(index));
                 }
             }
         }
@@ -225,7 +225,7 @@ public class Main {
                             System.out.printf("\n你指定的JSON资源路径是一个文件夹,这是不正确的,你应该指定一个文件\n");
                         } else {
                             FileInputStream fos = new FileInputStream(jsonFile);
-                            source = new JSONSourcImpl(fos, charset);
+                            source = new JSONSourceImpl(fos, charset);
                         }
                     } catch (Exception e) {
                         e.printStackTrace();

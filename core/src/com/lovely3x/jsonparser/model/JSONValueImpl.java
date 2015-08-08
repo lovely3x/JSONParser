@@ -1,7 +1,8 @@
 package com.lovely3x.jsonparser.model;
 
 import com.lovely3x.jsonparser.JSONType;
-import com.lovely3x.jsonparser.source.JSONSourcImpl;
+import com.lovely3x.jsonparser.source.JSONSourceImpl;
+import com.lovely3x.jsonparser.utils.CommonUtils;
 
 /**
  * json对 的值
@@ -20,7 +21,7 @@ public class JSONValueImpl implements JSONValue {
      * @param value
      */
     public JSONValueImpl(String value) {
-        this.value = value;
+        this.value = filter(value);
     }
 
     /**
@@ -46,9 +47,10 @@ public class JSONValueImpl implements JSONValue {
      *
      * @return
      */
-    protected String processString(String key) {
-        StringBuilder sb = new StringBuilder(key);
-        if (key.startsWith("\"") && key.endsWith("\"")) {
+    protected String processString(String str) {
+        str = filter(str);
+        StringBuilder sb = new StringBuilder(str);
+        if (str.startsWith("\"") && str.endsWith("\"")) {
             sb.deleteCharAt(0);
             sb.deleteCharAt(sb.length() - 1);
         }
@@ -57,12 +59,12 @@ public class JSONValueImpl implements JSONValue {
 
     @Override
     public JSONArray getJSONArray() {
-        return new JSONArray(new JSONSourcImpl(value));
+        return new JSONArray(new JSONSourceImpl(value));
     }
 
     @Override
     public JSONObject getJSONObject() {
-        return new JSONObject(new JSONSourcImpl(value));
+        return new JSONObject(new JSONSourceImpl(value));
     }
 
     @Override
@@ -87,7 +89,7 @@ public class JSONValueImpl implements JSONValue {
         if (isNull()) {
             return 0;
         }
-        return Integer.parseInt(filter(value));
+        return Integer.parseInt(getString());
     }
 
     @Override
@@ -116,7 +118,7 @@ public class JSONValueImpl implements JSONValue {
         if (isNull()) {
             return 0.0D;
         }
-        return Double.parseDouble(filter(value));
+        return Double.parseDouble(getString());
     }
 
     @Override
@@ -124,7 +126,7 @@ public class JSONValueImpl implements JSONValue {
         if (isNull()) {
             return 0.0F;
         }
-        return Float.parseFloat(filter(value));
+        return Float.parseFloat(getString());
 
     }
 
@@ -133,7 +135,7 @@ public class JSONValueImpl implements JSONValue {
         if (isNull()) {
             return false;
         }
-        return Boolean.parseBoolean(filter(value));
+        return Boolean.parseBoolean(getString());
     }
 
     @Override
@@ -141,7 +143,7 @@ public class JSONValueImpl implements JSONValue {
         if (isNull()) {
             return 0;
         }
-        return Long.parseLong(filter(value));
+        return Long.parseLong(getString());
     }
 
     /**
@@ -156,36 +158,7 @@ public class JSONValueImpl implements JSONValue {
 
     @Override
     public int guessType() {
-        String value = filter(this.value);
-        int type = JSONType.JSON_TYPE_INVALIDATE;
-        //无效的值
-        if (value == null || value.trim().length() == 0) {
-            return type;
-        }
-        if (value.startsWith("[") && value.endsWith("]")) {//json array
-            type = JSONType.JSON_TYPE_ARRAY;
-        } else if (value.startsWith("{") && value.endsWith("}")) {//json object
-            type = JSONType.JSON_TYPE_OBJECT;
-        } else if (value.startsWith("\"") && value.endsWith("\"")) {//string
-            type = JSONType.JSON_TYPE_STRING;
-        } else if (value.matches("^[\\+|\\-]?\\d+\\.\\d+([e|E]{1}[\\+|\\-]?\\d+)?$")) {//浮点数匹配
-            if (Double.parseDouble(value) > Float.MAX_VALUE / 2) {
-                type = JSONType.JSON_TYPE_DOUBLE;//double float
-            } else {
-                type = JSONType.JSON_TYPE_FLOAT;//single float
-            }
-        } else if (value.matches("^[\\+|\\-]?\\d+$")) {//整形匹配
-            if (Long.parseLong(value) > Integer.MAX_VALUE) {
-                type = JSONType.JSON_TYPE_LONG;//long int
-            } else {
-                type = JSONType.JSON_TYPE_INT;// int
-            }
-        } else if (value.matches("^[true|false]$")) {
-            type = JSONType.JSON_TYPE_BOOLEAN;
-        } else if (value.matches("^null$")) {
-            type = JSONType.JSON_TYPE_NULL;//null
-        }
-        return type;
+        return CommonUtils.guessType(this.value);
     }
 
     @Override

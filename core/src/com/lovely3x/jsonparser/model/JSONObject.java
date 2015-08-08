@@ -12,8 +12,8 @@ import com.lovely3x.jsonparser.objectcreator.ObjectCreator;
 import com.lovely3x.jsonparser.objectcreator.ObjectCreatorImpl;
 import com.lovely3x.jsonparser.parser.JSONParser;
 import com.lovely3x.jsonparser.parser.JSONParserImpl;
-import com.lovely3x.jsonparser.source.JSONSourcImpl;
 import com.lovely3x.jsonparser.source.JSONSource;
+import com.lovely3x.jsonparser.source.JSONSourceImpl;
 import com.lovely3x.jsonparser.source.MapJSONSource;
 import com.lovely3x.jsonparser.source.ObjectJSONSource;
 
@@ -50,7 +50,7 @@ public class JSONObject {
 
 
     public JSONObject(String source) {
-        this(new JSONSourcImpl(source));
+        this(new JSONSourceImpl(source));
     }
 
     /**
@@ -280,7 +280,7 @@ public class JSONObject {
      * @return
      */
     public int guessType(String key) {
-        return guessType(new JSONSourcImpl(key));
+        return guessType(new JSONSourceImpl(key));
     }
 
     /**
@@ -301,7 +301,7 @@ public class JSONObject {
      * @return
      */
     public int getInt(String key) {
-        return getInt(new JSONSourcImpl(key));
+        return getInt(new JSONSourceImpl(key));
     }
 
     /**
@@ -327,7 +327,7 @@ public class JSONObject {
      * @return
      */
     public long getLong(String key) {
-        return getLong(new JSONSourcImpl(key));
+        return getLong(new JSONSourceImpl(key));
     }
 
     /**
@@ -357,7 +357,7 @@ public class JSONObject {
      * @return
      */
     public float getFloat(String key) {
-        return getFloat(new JSONSourcImpl(key));
+        return getFloat(new JSONSourceImpl(key));
     }
 
     /**
@@ -387,7 +387,7 @@ public class JSONObject {
      * @return
      */
     public double getDouble(String key) {
-        return getDouble(new JSONSourcImpl(key));
+        return getDouble(new JSONSourceImpl(key));
     }
 
     /**
@@ -417,7 +417,7 @@ public class JSONObject {
      * @return
      */
     public boolean getBoolean(String key) {
-        return getBoolean(new JSONSourcImpl(key));
+        return getBoolean(new JSONSourceImpl(key));
     }
 
     /**
@@ -447,7 +447,7 @@ public class JSONObject {
      * @return
      */
     public int getCastInt(String key) {
-        return getCastInt(new JSONSourcImpl(key));
+        return getCastInt(new JSONSourceImpl(key));
     }
 
     /**
