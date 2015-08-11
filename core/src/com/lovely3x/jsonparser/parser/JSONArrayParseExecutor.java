@@ -194,9 +194,8 @@ public class JSONArrayParseExecutor {
                     && leftCurlyBracket.size() == 0
                     && leftSquareBracket.size() == 0
                     && quoteStack.size() % 2 == 0
-                    && indexOfCommaStack.size() > 0) {
-                char lastChar = preOperatingCharacter;
-                switch (lastChar) {
+                    && indexOfCommaStack.size() > 0 && preOperatingCharacter != JSONStructuralType.QUOTE) {
+                switch (preOperatingCharacter) {
                     case JSONStructuralType.STRUCTURAL_RIGHT_SQUARE_BRACKET:
                     case JSONStructuralType.STRUCTURAL_RIGHT_CURLY_BRACKET:
                         break;
@@ -207,10 +206,10 @@ public class JSONArrayParseExecutor {
             }
             //修复#2 Issue
             if (i + 1 == count) {
-                if (/*leftCurlyBracket.size() == 0
+                if (leftCurlyBracket.size() == 0
                         && leftSquareBracket.size() == 0
                         && quoteStack.size() % 2 == 0
-                        && */preOperatingCharacter == JSONStructuralType.STRUCTURAL_INVALIDATE
+                        && preOperatingCharacter == JSONStructuralType.STRUCTURAL_INVALIDATE
                         ) {
                     String str = sourceString.substring(startPosition + 1, count);
                     switch (CommonUtils.guessType(str)) {

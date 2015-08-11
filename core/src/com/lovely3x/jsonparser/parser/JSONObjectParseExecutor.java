@@ -72,13 +72,13 @@ public class JSONObjectParseExecutor {
             switch (currentChar) {
                 case JSONStructuralType.STRUCTURAL_LEFT_CURLY_BRACKET:
                     //如果当前没有对方括弧采集
-                    if (leftSquareBracket.size() == 0) {
+                    if (leftSquareBracket.size() == 0 && quoteStack.size() % 2 == 0) {
                         leftCurlyBracket.push(currentChar);
                         indexOfLeftCurlyBracket.push(i);
                     }
                     break;
                 case JSONStructuralType.STRUCTURAL_RIGHT_CURLY_BRACKET:
-                    if (leftCurlyBracket.size() > 0) {
+                    if (leftCurlyBracket.size() > 0 && quoteStack.size() % 2 == 0) {
                         //将符号和位置压入栈中,便于统计
                         rightCurlyBracket.push(currentChar);
                         indexOfRightCurlyBracket.push(i);
@@ -97,13 +97,13 @@ public class JSONObjectParseExecutor {
                     }
                     break;
                 case JSONStructuralType.STRUCTURAL_LEFT_SQUARE_BRACKET:
-                    if (leftCurlyBracket.size() == 0) {
+                    if (leftCurlyBracket.size() == 0 && quoteStack.size() % 2 == 0) {
                         leftSquareBracket.push(currentChar);
                         indexOfLeftSquareBracket.push(i);
                     }
                     break;
                 case JSONStructuralType.STRUCTURAL_RIGHT_SQUARE_BRACKET:
-                    if (leftSquareBracket.size() > 0) {
+                    if (leftSquareBracket.size() > 0 && quoteStack.size() % 2 == 0) {
                         //将符号和位置压入栈中,便于统计
                         rightSquareBracket.push(currentChar);
                         indexOfRightSquareBracket.push(i);
