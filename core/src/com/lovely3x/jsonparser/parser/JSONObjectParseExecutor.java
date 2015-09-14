@@ -158,7 +158,8 @@ public class JSONObjectParseExecutor {
                     break;
                 case JSONStructuralType.STRUCTURAL_COMMA://逗号
                     //没有进行数据采集
-                    if (leftCurlyBracket.size() == 0 && leftSquareBracket.size() == 0) {
+                    // #fixed #5 {"key": "(,)"}
+                    if (leftCurlyBracket.size() == 0 && leftSquareBracket.size() == 0 && quoteStack.size() == 0) {
                         if (colonStack.size() > 0) {
                             colonStack.pop();
                             callback.onParsed(sourceString.substring(indexOfColonStack.pop() + 1, i));
