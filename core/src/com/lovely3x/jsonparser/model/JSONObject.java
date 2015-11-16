@@ -162,7 +162,6 @@ public class JSONObject {
         this(new MapJSONSource(map, rule));
     }
 
-
     /**
      * 通过一个map作为数据源
      * 一般用于生成json串
@@ -472,7 +471,6 @@ public class JSONObject {
      */
     public JSONValue getValue(JSONKey key) {
         return mPair.get(key);
-
     }
 
     /**
