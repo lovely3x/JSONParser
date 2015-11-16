@@ -14,7 +14,7 @@ public interface JSONMatcher {
      * 你还需要指定 json 的 value 对应的类型 他将会和 类中的类型对应
      * 这里的配置文件你可以在,对象创建器里面拿到,所以,一切都是自由的
      *
-     * @return
+     * @return 配置文件
      */
     ObjectCreatorConfig match(ObjectCreatorConfig newConfig);
 
@@ -31,8 +31,8 @@ public interface JSONMatcher {
     /**
      * value 转换原则
      *
-     * @param value
-     * @return
+     * @param value 需要转换的对象
+     * @return 转换后的对象
      */
     Object valueRule(Object value);
 

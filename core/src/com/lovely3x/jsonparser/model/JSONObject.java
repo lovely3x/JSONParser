@@ -18,8 +18,6 @@ import com.lovely3x.jsonparser.source.MapJSONSource;
 import com.lovely3x.jsonparser.source.ObjectJSONSource;
 
 import java.io.OutputStream;
-import java.lang.reflect.Field;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
@@ -46,7 +44,7 @@ public class JSONObject {
     /**
      * 解析好的键值对
      */
-    private HashMap<JSONKey, JSONValue> mPair;
+    private Map<JSONKey, JSONValue> mPair;
 
 
     public JSONObject(String source) {
@@ -166,8 +164,12 @@ public class JSONObject {
 
 
     /**
-     * @param map
-     * @param rule
+     * 通过一个map作为数据源
+     * 一般用于生成json串
+     *
+     * @param map    数据源 Map
+     * @param parser 指定解析器
+     * @param rule   生成的规则
      */
     public JSONObject(Map map, JSONGenerateRule rule, JSONParser parser) {
         this(new MapJSONSource(map, rule), parser);
@@ -175,8 +177,12 @@ public class JSONObject {
 
 
     /**
-     * @param map
-     * @param rule
+     * 通过一个map作为数据源
+     * 一般用于生成json串
+     *
+     * @param map     数据源 Map
+     * @param rule    生成的规则
+     * @param factory 键值对生成工厂
      */
     public JSONObject(Map map, JSONGenerateRule rule, JSONParser parser, JSONPairFactory factory) {
         this(new MapJSONSource(map, rule), parser, factory);
@@ -196,7 +202,6 @@ public class JSONObject {
      * 通过制定的key获取json对象
      *
      * @param key 指定的key
-     * @return
      */
     public JSONObject getJSONObject(String key) {
         return getJSONObject(mFactory.getJSONKey(key));
@@ -206,7 +211,6 @@ public class JSONObject {
      * 通过制定的key获取json对象
      *
      * @param key 指定的key
-     * @return
      */
     public JSONObject getJSONObject(JSONKey key) {
         return mPair.get(key).getJSONObject();
@@ -234,9 +238,6 @@ public class JSONObject {
 
     /**
      * 通过制定的key 获取String
-     *
-     * @param key
-     * @return
      */
     public String getString(String key) {
         return getString(mFactory.getJSONKey(key));
@@ -244,9 +245,6 @@ public class JSONObject {
 
     /**
      * 通过制定的key 获取String
-     *
-     * @param source
-     * @return
      */
     public String getString(JSONSource source) {
         return getString(mFactory.getJSONKey(source));
@@ -254,9 +252,6 @@ public class JSONObject {
 
     /**
      * 通过制定的key 获取String
-     *
-     * @param key
-     * @return
      */
     public String getString(JSONKey key) {
         return mPair.get(key).getString();
@@ -265,19 +260,14 @@ public class JSONObject {
 
     /**
      * 获取当前json串的键值对
-     *
-     * @return
      */
-    public HashMap<JSONKey, JSONValue> getPair() {
+    public Map<JSONKey, JSONValue> getPair() {
         return mPair;
     }
 
 
     /**
      * 猜测指定的key对应的数据类型
-     *
-     * @param key
-     * @return
      */
     public int guessType(String key) {
         return guessType(new JSONSourceImpl(key));
@@ -285,9 +275,6 @@ public class JSONObject {
 
     /**
      * 猜测指定的key对应的数据类型
-     *
-     * @param key
-     * @return
      */
     public int guessType(JSONSource key) {
         return mPair.get(mFactory.getJSONKey(key)).guessType();
@@ -298,7 +285,6 @@ public class JSONObject {
      * 获取int 类型
      *
      * @param key 获取的的key
-     * @return
      */
     public int getInt(String key) {
         return getInt(new JSONSourceImpl(key));
@@ -324,7 +310,6 @@ public class JSONObject {
      * 获取long型的描述
      *
      * @param key key
-     * @return
      */
     public long getLong(String key) {
         return getLong(new JSONSourceImpl(key));
@@ -334,7 +319,6 @@ public class JSONObject {
      * 获取long型的描述
      *
      * @param source key
-     * @return
      */
     public long getLong(JSONSource source) {
         return getLong(mFactory.getJSONKey(source));
@@ -344,7 +328,6 @@ public class JSONObject {
      * 获取long型的描述
      *
      * @param key key
-     * @return
      */
     public long getLong(JSONKey key) {
         return mPair.get(key).getLong();
@@ -354,7 +337,6 @@ public class JSONObject {
      * 获取float型的描述
      *
      * @param key key
-     * @return
      */
     public float getFloat(String key) {
         return getFloat(new JSONSourceImpl(key));
@@ -364,7 +346,6 @@ public class JSONObject {
      * 获取float型的描述
      *
      * @param source key
-     * @return
      */
     public float getFloat(JSONSource source) {
         return getFloat(mFactory.getJSONKey(source));
@@ -374,7 +355,6 @@ public class JSONObject {
      * 获取float型的描述
      *
      * @param key key
-     * @return
      */
     public float getFloat(JSONKey key) {
         return mPair.get(key).getFloat();
@@ -384,7 +364,6 @@ public class JSONObject {
      * 获取double型的描述
      *
      * @param key key
-     * @return
      */
     public double getDouble(String key) {
         return getDouble(new JSONSourceImpl(key));
@@ -394,7 +373,6 @@ public class JSONObject {
      * 获取double的描述
      *
      * @param source key
-     * @return
      */
     public double getDouble(JSONSource source) {
         return getDouble(mFactory.getJSONKey(source));
@@ -404,7 +382,6 @@ public class JSONObject {
      * 获取double的描述
      *
      * @param key key
-     * @return
      */
     public double getDouble(JSONKey key) {
         return mPair.get(key).getDouble();
@@ -414,7 +391,6 @@ public class JSONObject {
      * 获取double型的描述
      *
      * @param key key
-     * @return
      */
     public boolean getBoolean(String key) {
         return getBoolean(new JSONSourceImpl(key));
@@ -424,7 +400,6 @@ public class JSONObject {
      * 获取double的描述
      *
      * @param source key
-     * @return
      */
     public boolean getBoolean(JSONSource source) {
         return getBoolean(mFactory.getJSONKey(source));
@@ -434,7 +409,6 @@ public class JSONObject {
      * 获取double的描述
      *
      * @param key key
-     * @return
      */
     public boolean getBoolean(JSONKey key) {
         return mPair.get(key).getBoolean();
@@ -444,7 +418,6 @@ public class JSONObject {
      * 获取强制类型转换 int
      *
      * @param key key
-     * @return
      */
     public int getCastInt(String key) {
         return getCastInt(new JSONSourceImpl(key));
@@ -454,7 +427,6 @@ public class JSONObject {
      * 获取强制类型转换 int
      *
      * @param source key
-     * @return
      */
     public int getCastInt(JSONSource source) {
         return getCastInt(mFactory.getJSONKey(source));
@@ -464,7 +436,6 @@ public class JSONObject {
      * 获取强制类型转换 int
      *
      * @param key key
-     * @return
      */
     public int getCastInt(JSONKey key) {
         return mPair.get(key).getCastInt();
@@ -526,10 +497,6 @@ public class JSONObject {
      * @return 创建成功则返回该对象, 否则为null
      */
     public <T> T createObject(Class clazz, ObjectCreator<T> creator, JSONMatcher matcher) {
-        Field[] clazzFields = clazz.getDeclaredFields();
-        if (clazzFields == null || clazzFields.length == 0) {
-            throw new IllegalArgumentException("Clazz must contain one or more field.");
-        }
         return creator.create(this, clazz, matcher);
     }
 
@@ -547,10 +514,6 @@ public class JSONObject {
      * @return 创建成功则返回该对象, 否则为null
      */
     public <T> T createObject(Class clazz, ObjectCreator<T> creator) {
-        Field[] clazzFields = clazz.getDeclaredFields();
-        if (clazzFields == null || clazzFields.length == 0) {
-            throw new IllegalArgumentException("Clazz must contain one or more field.");
-        }
         return creator.create(this, clazz, new UnderlineMatcher());
     }
 
@@ -575,7 +538,7 @@ public class JSONObject {
      * 它只能解析出单个对象中的基本类型和String 对于复合类型是没有办法解析的
      * 也就是说如果 现在 一个 类中有一个字段是List 那么是没办法解析出这个List的
      * 将当前的json对象转换为java对象
-     * <p/>
+     * <p>
      * 使用默认的对象创建器
      *
      * @param clazz   需要转换的类
@@ -584,18 +547,14 @@ public class JSONObject {
      * @return 创建成功则返回该对象, 否则为null
      */
     public <T> T createObject(Class<T> clazz, JSONMatcher matcher) {
-        Field[] clazzFields = clazz.getDeclaredFields();
-        if (clazzFields == null || clazzFields.length == 0) {
-            throw new IllegalArgumentException("Clazz must contain one or more field.");
-        }
         return new ObjectCreatorImpl<T>().create(this, clazz, matcher);
     }
 
     /**
      * 使用指定的格式化类进行格式化
      *
-     * @param formatter
-     * @return
+     * @param formatter 指定的格式化器
+     * @return 格式化后的字符串
      */
     public String format(JSONFormatter formatter) {
         return formatter.formatJSONObject(this).toString();

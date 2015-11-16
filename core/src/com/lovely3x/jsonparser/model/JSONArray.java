@@ -288,7 +288,7 @@ public class JSONArray {
 
     /**
      * 使用指定的对象创建器 和 匹配器 创建一个对象集合
-     * <p/>
+     * <p>
      * 使用这个方法创建的对象是不存在对象依赖的,
      * 它只能解析出单个对象中的基本类型和String 对于复合类型是没有办法解析的
      * 也就是说如果 现在 一个 类中有一个字段是List 那么是没办法解析出这个List的
@@ -301,23 +301,48 @@ public class JSONArray {
      */
     public <T> List<T> createObjects(Class<? extends List> container, Class clazz, ObjectCreator<T> creator, JSONMatcher matcher) throws IllegalAccessException, InstantiationException {
         final int count = values.size();
-        List<T> list = container.newInstance();
+        List<Object> list = container.newInstance();
         for (int i = 0; i < count; i++) {
             JSONValue value = values.get(i);
             switch (value.guessType()) {
+                case JSONType.JSON_TYPE_ARRAY:
+                    break;
                 case JSONType.JSON_TYPE_OBJECT:
                     T obj = value.getJSONObject().createObject(clazz, creator, matcher);
+                    //注意,我在这里判断了null的这种状况,也就是说,不支出创建一个null对象容器中去
+                    //因为在我日常的开发中,是基本没有用到 需要 null 这中情况的
+                    //反而是因为 list 中出现 null经常头疼
                     if (obj != null) list.add(obj);
+                    break;
+                case JSONType.JSON_TYPE_BOOLEAN:
+                    list.add(value.getBoolean());
+                    break;
+                case JSONType.JSON_TYPE_INT:
+                    list.add(value.getInt());
+                    break;
+                case JSONType.JSON_TYPE_LONG:
+                    list.add(value.getLong());
+                    break;
+                case JSONType.JSON_TYPE_FLOAT:
+                    list.add(value.getFloat());
+                    break;
+                case JSONType.JSON_TYPE_DOUBLE:
+                    list.add(value.getDouble());
+                    break;
+                case JSONType.JSON_TYPE_STRING:
+                    list.add(value.getString());
+                    break;
+                case JSONType.JSON_TYPE_NULL:
                     break;
             }
         }
-        return list;
+        return (List<T>) list;
     }
 
 
     /**
      * 使用指定的对象创建器,类对象 和 默认的属性匹配器(UnderlineMatcher) 创建对象
-     * <p/>
+     * <p>
      * 使用这个方法创建的对象是不存在对象依赖的,
      * 它只能解析出单个对象中的基本类型和String 对于复合类型是没有办法解析的
      * 也就是说如果 现在 一个 类中有一个字段是List 那么是没办法解析出这个List的
@@ -333,7 +358,7 @@ public class JSONArray {
 
     /**
      * 使用指定的默认的对象创建器(ObjectCreatorImpl) 和 指定的匹配器与类对象 创建一个对象集合
-     * <p/>
+     * <p>
      * 使用这个方法创建的对象是不存在对象依赖的,
      * 它只能解析出单个对象中的基本类型和String 对于复合类型是没有办法解析的
      * 也就是说如果 现在 一个 类中有一个字段是List 那么是没办法解析出这个List的
@@ -348,7 +373,7 @@ public class JSONArray {
 
     /**
      * 使用指定的默认的对象创建器(ObjectCreatorImpl) 类对象 创建一个对象集合
-     * <p/>
+     * <p>
      * 使用这个方法创建的对象是不存在对象依赖的,
      * 它只能解析出单个对象中的基本类型和String 对于复合类型是没有办法解析的
      * 也就是说如果 现在 一个 类中有一个字段是List 那么是没办法解析出这个List的
@@ -360,10 +385,26 @@ public class JSONArray {
         return createObjects(ArrayList.class, clazz, new ObjectCreatorImpl<T>(), new UnderlineMatcher());
     }
 
+    /**
+     * Note: 如果使用这个方法的话,必要保证这个json数组中不存在 除基本类型外和String的其他类型对象,否则会抛出异常
+     * 因此,我给这个方法加上了 @Deprecated 只是提醒你需要注意罢了
+     * 使用指定的默认的对象创建器(ObjectCreatorImpl) 类对象 创建一个对象集合
+     * <p>
+     * 使用这个方法创建的对象是不存在对象依赖的,
+     * 它只能解析出单个对象中的基本类型和String 对于复合类型是没有办法解析的
+     * 也就是说如果 现在 一个 类中有一个字段是List 那么是没办法解析出这个List的
+     *
+     * @param <T> 创建的结果集合
+     */
+    @Deprecated
+    public <T> List<T> createObjects() throws InstantiationException, IllegalAccessException {
+        return createObjects(ArrayList.class, null, new ObjectCreatorImpl<T>(), new UnderlineMatcher());
+    }
+
 
     /**
      * 使用指定的对象创建器,类对象 和 默认的属性匹配器(UnderlineMatcher) 创建对象
-     * <p/>
+     * <p>
      * 使用这个方法创建的对象是不存在对象依赖的,
      * 它只能解析出单个对象中的基本类型和String 对于复合类型是没有办法解析的
      * 也就是说如果 现在 一个 类中有一个字段是List 那么是没办法解析出这个List的
@@ -380,7 +421,7 @@ public class JSONArray {
 
     /**
      * 使用指定的默认的对象创建器(ObjectCreatorImpl) 和 指定的匹配器与类对象 创建一个对象集合
-     * <p/>
+     * <p>
      * 使用这个方法创建的对象是不存在对象依赖的,
      * 它只能解析出单个对象中的基本类型和String 对于复合类型是没有办法解析的
      * 也就是说如果 现在 一个 类中有一个字段是List 那么是没办法解析出这个List的
@@ -396,7 +437,7 @@ public class JSONArray {
 
     /**
      * 使用指定的默认的对象创建器(ObjectCreatorImpl) 类对象 创建一个对象集合
-     * <p/>
+     * <p>
      * 使用这个方法创建的对象是不存在对象依赖的,
      * 它只能解析出单个对象中的基本类型和String 对于复合类型是没有办法解析的
      * 也就是说如果 现在 一个 类中有一个字段是List 那么是没办法解析出这个List的

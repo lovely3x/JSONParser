@@ -67,7 +67,7 @@ public class AnnotationMatcher implements JSONMatcher {
                 if (subObject != null) {
                     field.set(instance, matcher.valueRule(
                             jsonObject.getJSONObject(config.jsonKey).
-                                    createObject(subObject.getClass(), new AnnotationMatcher())));
+                                    createObject(subObject.getClass(), matcher)));
                 }
                 break;
             case JSONType.JSON_TYPE_ARRAY:
@@ -75,7 +75,7 @@ public class AnnotationMatcher implements JSONMatcher {
                 Object container = createObject(config.fieldValueType);
                 Class subClass = Class.forName(config.subFieldValueType);
                 if (container != null) {
-                    field.set(instance, matcher.valueRule(jsonObject.getJSONArray(config.jsonKey).createObjects((Class<? extends List>) container.getClass(), subClass)));
+                    field.set(instance, matcher.valueRule(jsonObject.getJSONArray(config.jsonKey).createObjects((Class<? extends List>) container.getClass(), subClass, matcher)));
                 }
                 break;
         }

@@ -9,6 +9,7 @@ import com.lovely3x.jsonparser.source.JSONSource;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * json 解析器
@@ -82,7 +83,7 @@ public class JSONParserImpl implements JSONParser {
     }
 
     @Override
-    public HashMap<JSONKey, JSONValue> parseJSONObject() {
+    public Map<JSONKey, JSONValue> parseJSONObject() {
         return new JSONObjectParser(mSource, mPairFactory).parse();
     }
 }

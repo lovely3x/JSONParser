@@ -3,8 +3,8 @@ package com.lovely3x.jsonparser.parser;
 import com.lovely3x.jsonparser.model.JSONKey;
 import com.lovely3x.jsonparser.model.JSONValue;
 
-import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by lovely3x on 15-6-29.
@@ -23,7 +23,7 @@ public interface JSONParser {
      *
      * @return
      */
-    HashMap<JSONKey, JSONValue> parseJSONObject();
+    Map<JSONKey, JSONValue> parseJSONObject();
 
 
 }

@@ -2,7 +2,6 @@ package com.lovely3x.jsonparser.matcher;
 
 import com.lovely3x.jsonparser.JSONType;
 import com.lovely3x.jsonparser.TypeTable;
-import com.lovely3x.jsonparser.log.Log;
 import com.lovely3x.jsonparser.model.JSONKey;
 import com.lovely3x.jsonparser.model.ObjectCreatorConfig;
 
@@ -32,8 +31,8 @@ public class UnderlineMatcher implements JSONMatcher {
     /**
      * 判断给定的这个字段名和json的字段名是否相同
      *
-     * @param fieldName
-     * @param jsonKyeName
+     * @param fieldName   字段名
+     * @param jsonKyeName json 的key名
      * @return
      */
     private boolean isEqual(String fieldName, String jsonKyeName) {
@@ -91,11 +90,9 @@ public class UnderlineMatcher implements JSONMatcher {
                 field.set(instance, matcher.valueRule(jsonObject.getString(config.jsonKey)));
                 break;
             case JSONType.JSON_TYPE_OBJECT:
-                Log.e(TAG, "需要创建json对象,但是是不被支持的");
-                break;
+                throw new IllegalStateException("需要创建json对象,但是是不被UnderlineMatcher支持的");
             case JSONType.JSON_TYPE_ARRAY:
-                Log.e(TAG, "需要创建jsonArray,但是是不被支持的");
-                break;
+                throw new IllegalStateException("需要创建jsonArray,但是是不被UnderlineMatcher支持的");
         }
     }
 

@@ -1,6 +1,7 @@
 package com.lovely3x.jsonparser.objectcreator;
 
 import com.lovely3x.jsonparser.JSONType;
+import com.lovely3x.jsonparser.log.Log;
 import com.lovely3x.jsonparser.matcher.JSONMatcher;
 import com.lovely3x.jsonparser.model.JSONKey;
 import com.lovely3x.jsonparser.model.JSONObject;
@@ -40,7 +41,11 @@ public class ObjectCreatorImpl<T> implements ObjectCreator<T> {
                     config.jsonValueType = JSONType.JSON_TYPE_INVALIDATE;
                     ObjectCreatorConfig tem = matcher.match(config);
                     if (tem != null && tem.isEqual) {
-                        matcher.putValue(object, matcher, jsonObject, tem);
+                        try {
+                            matcher.putValue(object, matcher, jsonObject, tem);
+                        } catch (Exception e) {
+                            Log.e(TAG, e);
+                        }
                     }
                 }
             }
@@ -54,4 +59,5 @@ public class ObjectCreatorImpl<T> implements ObjectCreator<T> {
         }
         return null;
     }
+
 }
