@@ -1,0 +1,18 @@
+[
+  {
+    "id": 1,
+    "name": "学前班-班",
+    "students": [
+      {
+        "id": 2,
+        "name": "小王",
+        "classes_id": 1,
+        "classes_name": "学前一班",
+        "teacher": {
+          "id": 100,
+          "name": "周老师"
+        }
+      }
+    ]
+  }
+]

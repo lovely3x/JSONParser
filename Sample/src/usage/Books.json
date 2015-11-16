@@ -1,0 +1,30 @@
+[
+  {
+    "id": 100,
+    "name": "金瓶梅",
+    "author": "未知",
+    "publish_date": 10000023042,
+    "price": 99.85
+  },
+  {
+    "id": 100,
+    "name": "葫芦娃",
+    "author": "未知",
+    "publish_date": 10000023042,
+    "price": 20.85
+  },
+  {
+    "id": 100,
+    "name": "西游记",
+    "author": "未知",
+    "publish_date": 10000023042,
+    "price": 55.00
+  },
+  {
+    "id": 100,
+    "name": "匆匆那年",
+    "author": "未知",
+    "publish_date": 10000023042,
+    "price": 19.85
+  }
+]
