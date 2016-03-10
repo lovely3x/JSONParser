@@ -23,18 +23,18 @@ public class JSONParserImpl implements JSONParser {
     /**
      * 数据源
      */
-    private final JSONSource mSource;
+    protected final JSONSource mSource;
 
 
     /**
      * 键值对工厂
      */
-    private JSONPairFactory mPairFactory;
+    protected JSONPairFactory mPairFactory;
 
     /**
      * 保存键值对
      */
-    private HashMap<JSONKey, JSONValue> pairs = new HashMap<>();
+    protected HashMap<JSONKey, JSONValue> pairs = new HashMap<>();
 
 
     /**

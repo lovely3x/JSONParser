@@ -2,6 +2,7 @@ package com.lovely3x.jsonparser.parser;
 
 import com.lovely3x.jsonparser.model.JSONKey;
 import com.lovely3x.jsonparser.model.JSONValue;
+import com.lovely3x.jsonparser.source.JSONSource;
 
 import java.util.List;
 import java.util.Map;
@@ -16,14 +17,14 @@ public interface JSONParser {
      *
      * @return
      */
-    List<JSONValue> parseJSONArray();
+    List<JSONValue> parseJSONArray(JSONSource source);
 
     /**
      * 解析json对象
      *
      * @return
      */
-    Map<JSONKey, JSONValue> parseJSONObject();
+    Map<JSONKey, JSONValue> parseJSONObject(JSONSource source);
 
 
 }

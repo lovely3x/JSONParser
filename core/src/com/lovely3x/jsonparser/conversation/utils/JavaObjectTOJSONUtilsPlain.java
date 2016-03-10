@@ -2,7 +2,11 @@ package com.lovely3x.jsonparser.conversation.utils;
 
 import com.lovely3x.jsonparser.JSONType;
 import com.lovely3x.jsonparser.TypeTable;
+import com.lovely3x.jsonparser.annotations.JSON;
+import com.lovely3x.jsonparser.annotations.JSONArray;
+import com.lovely3x.jsonparser.annotations.JSONObject;
 import com.lovely3x.jsonparser.conversation.rule.JSONGenerateRule;
+import com.lovely3x.jsonparser.utils.CommonUtils;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -72,7 +76,7 @@ public class JavaObjectTOJSONUtilsPlain {
             } else if (object instanceof Boolean) {//boolean
                 sb.append(i == 0 ? "" : ",").append(object);
             } else if (object instanceof String) {//String
-                sb.append(i == 0 ? "" : ",").append('"').append(object).append('"');
+                sb.append(i == 0 ? "" : ",").append('"').append(processString(String.valueOf(object))).append('"');
             } else {
                 objectStackLevel--;
                 sb.append(i == 0 ? "" : ",").append(parseObject(object));
@@ -80,6 +84,21 @@ public class JavaObjectTOJSONUtilsPlain {
         }
         sb.append(']');
         return sb;
+    }
+
+    /**
+     * 在字段的注解中查找JSON 的 key
+     * @param field 需要查找的字段
+     * @return null或查找的注解Value
+     */
+    public String searchKeyInAnnotations(Field field) {
+        JSON jsonAnnotation = field.getAnnotation(JSON.class);
+        if (jsonAnnotation != null) return jsonAnnotation.value();
+        JSONObject jsonObjectAnnotation = field.getAnnotation(JSONObject.class);
+        if (jsonObjectAnnotation != null) return jsonObjectAnnotation.value();
+        JSONArray jsonArrayAnnotation = field.getAnnotation(JSONArray.class);
+        if (jsonArrayAnnotation != null) return jsonArrayAnnotation.value();
+        return null;
     }
 
     /**
@@ -93,72 +112,107 @@ public class JavaObjectTOJSONUtilsPlain {
         if (count > 0) sb.append('{');
         for (int i = 0; i < count; i++) {
             Field field = fields[i];
+            String annotationKey = null;
+            boolean useKeyRule = false;
+            JSON jsonAnnotation = field.getAnnotation(JSON.class);
+            if (jsonAnnotation != null) {
+                if (jsonAnnotation.useAnnotation()) {
+                    annotationKey = jsonAnnotation.value();
+                    useKeyRule = jsonAnnotation.useKeyRuleOnUseAnnotation();
+                }
+            } else {
+                JSONObject jsonObjectAnnotation = field.getAnnotation(JSONObject.class);
+                if (jsonObjectAnnotation != null) {
+                    if (jsonObjectAnnotation.useAnnotation()) {
+                        annotationKey = jsonObjectAnnotation.value();
+                        useKeyRule = jsonObjectAnnotation.useKeyRuleOnUseAnnotation();
+                    }
+                } else {
+                    JSONArray jsonArrayAnnotation = field.getAnnotation(JSONArray.class);
+                    if (jsonArrayAnnotation != null) {
+                        if (jsonArrayAnnotation.useAnnotation()) {
+                            annotationKey = jsonArrayAnnotation.value();
+                            useKeyRule = jsonArrayAnnotation.useKeyRuleOnUseAnnotation();
+                        }
+                    }
+                }
+            }
+
+            String key = field.getName();
+            if (annotationKey != null) {
+                key = annotationKey;
+            } else {
+                //字段总是使用转换规则
+                useKeyRule = true;
+            }
+
             field.setAccessible(true);
+            if (!com.lovely3x.common.utils.CommonUtils.fieldCanBeModify(field)) continue;
             int type = TypeTable.getJSONTypeByJavaType(field.getType().getName());
             switch (type) {
                 case JSONType.JSON_TYPE_BOOLEAN:
-                    sb.append('"').append(mRule.keyRule(field.getName())).append('"');
+                    sb.append('"').append(useKeyRule ? mRule.keyRule(key/*field.getName()*/) : key).append('"');
                     sb.append(':').append(field.getBoolean(object)).append(i + 1 == count ? "" : ",");
                     break;
                 case JSONType.JSON_TYPE_INT:
-                    sb.append('"').append(mRule.keyRule(field.getName())).append('"');
+                    sb.append('"').append(useKeyRule ? mRule.keyRule(key/*field.getName()*/) : key).append('"');
                     sb.append(':').append(field.getInt(object)).append(i + 1 == count ? "" : ",");
                     break;
                 case JSONType.JSON_TYPE_LONG:
-                    sb.append('"').append(mRule.keyRule(field.getName())).append('"');
+                    sb.append('"').append(useKeyRule ? mRule.keyRule(key/*field.getName()*/) : key).append('"');
                     sb.append(':').append(field.getLong(object)).append(i + 1 == count ? "" : ",");
                     break;
                 case JSONType.JSON_TYPE_FLOAT:
-                    sb.append('"').append(mRule.keyRule(field.getName())).append('"');
+                    sb.append('"').append(useKeyRule ? mRule.keyRule(key/*field.getName()*/) : key).append('"');
                     sb.append(':').append(field.getFloat(object)).append(i + 1 == count ? "" : ",");
                     break;
                 case JSONType.JSON_TYPE_DOUBLE:
-                    sb.append('"').append(mRule.keyRule(field.getName())).append('"');
+                    sb.append('"').append(useKeyRule ? mRule.keyRule(key/*field.getName()*/) : key).append('"');
                     sb.append(':').append(field.getDouble(object)).append(i + 1 == count ? "" : ",");
                     break;
                 case JSONType.JSON_TYPE_STRING:
-                    sb.append('"').append(mRule.keyRule(field.getName())).append('"');
-                    sb.append(':').append('"').append(field.get(object)).append('"').append(i + 1 == count ? "" : ",");
+                    sb.append('"').append(useKeyRule ? mRule.keyRule(key/*field.getName()*/) : key).append('"');
+                    sb.append(':').append('"').append(processString(String.valueOf(field.get(object)))).append('"').append(i + 1 == count ? "" : ",");
                     break;
                 default:
                     Object fieldInstance = field.get(object);
                     if (fieldInstance == null) {
-                        sb.append('"').append(mRule.keyRule(field.getName())).append('"');
+                        sb.append('"').append(useKeyRule ? mRule.keyRule(key/*field.getName()*/) : key).append('"');
                         sb.append(':').append("null").append(i + 1 == count ? "" : ",");
                     } else if (fieldInstance instanceof Map) {//map
-                        sb.append('"').append(mRule.keyRule(field.getName())).append('"');
+                        sb.append('"').append(useKeyRule ? mRule.keyRule(key/*field.getName()*/) : key).append('"');
                         mapStackLevel--;
                         sb.append(':').append(parseMap((Map) fieldInstance)).append(i + 1 == count ? "" : ",");
                     } else if (fieldInstance instanceof List) {//list
-                        sb.append('"').append(mRule.keyRule(field.getName())).append('"');
+                        sb.append('"').append(useKeyRule ? mRule.keyRule(key/*field.getName()*/) : key).append('"');
                         this.listStackLevel--;
                         sb.append(':').append(parseList((List) fieldInstance)).append(i + 1 == count ? "" : ",");
                     } else if (fieldInstance instanceof Boolean) {//boolean
-                        sb.append('"').append(mRule.keyRule(field.getName())).append('"');
+                        sb.append('"').append(useKeyRule ? mRule.keyRule(key/*field.getName()*/) : key).append('"');
                         sb.append(':').append(field.get(object)).append(i + 1 == count ? "" : ",");
                     } else if (fieldInstance instanceof Byte) {//byte
-                        sb.append('"').append(mRule.keyRule(field.getName())).append('"');
+                        sb.append('"').append(useKeyRule ? mRule.keyRule(key/*field.getName()*/) : key).append('"');
                         sb.append(':').append(field.get(object)).append(i + 1 == count ? "" : ",");
                     } else if (fieldInstance instanceof Short) {//short
-                        sb.append('"').append(mRule.keyRule(field.getName())).append('"');
+                        sb.append('"').append(useKeyRule ? mRule.keyRule(key/*field.getName()*/) : key).append('"');
                         sb.append(':').append(field.get(object)).append(i + 1 == count ? "" : ",");
                     } else if (fieldInstance instanceof Character) {//char
-                        sb.append('"').append(mRule.keyRule(field.getName())).append('"');
+                        sb.append('"').append(useKeyRule ? mRule.keyRule(key/*field.getName()*/) : key).append('"');
                         sb.append(':').append(field.get(object)).append(i + 1 == count ? "" : ",");
                     } else if (fieldInstance instanceof Integer) {//int
-                        sb.append('"').append(mRule.keyRule(field.getName())).append('"');
+                        sb.append('"').append(useKeyRule ? mRule.keyRule(key/*field.getName()*/) : key).append('"');
                         sb.append(':').append(field.get(object)).append(i + 1 == count ? "" : ",");
                     } else if (fieldInstance instanceof Long) {//long
-                        sb.append('"').append(mRule.keyRule(field.getName())).append('"');
+                        sb.append('"').append(useKeyRule ? mRule.keyRule(key/*field.getName()*/) : key).append('"');
                         sb.append(':').append(field.get(object)).append(i + 1 == count ? "" : ",");
                     } else if (fieldInstance instanceof Float) {//float
-                        sb.append('"').append(mRule.keyRule(field.getName())).append('"');
+                        sb.append('"').append(useKeyRule ? mRule.keyRule(key/*field.getName()*/) : key).append('"');
                         sb.append(':').append(field.get(object)).append(i + 1 == count ? "" : ",");
                     } else if (fieldInstance instanceof Double) {//double
-                        sb.append('"').append(mRule.keyRule(field.getName())).append('"');
+                        sb.append('"').append(useKeyRule ? mRule.keyRule(key/*field.getName()*/) : key).append('"');
                         sb.append(':').append(field.get(object)).append(i + 1 == count ? "" : ",");
                     } else {
-                        sb.append('"').append(mRule.keyRule(field.getName())).append('"');
+                        sb.append('"').append(useKeyRule ? mRule.keyRule(key/*field.getName()*/) : key).append('"');
                         objectStackLevel--;
                         sb.append(':').append(parseObject(fieldInstance)).append(i + 1 == count ? "" : ",");
                     }
@@ -209,7 +263,7 @@ public class JavaObjectTOJSONUtilsPlain {
             } else if (value instanceof Boolean) {//boolean
                 sb.append(i == 0 ? "" : ",").append('"').append(key).append('"').append(':').append(value);
             } else if (value instanceof String) {//String
-                sb.append(i == 0 ? "" : ",").append('"').append(key).append('"').append(':').append('"').append(value).append('"');
+                sb.append(i == 0 ? "" : ",").append('"').append(key).append('"').append(':').append('"').append(processString(String.valueOf(value))).append('"');
             } else {
                 objectStackLevel--;
                 sb.append(i == 0 ? "" : ",").append('"').append(key).append('"').append(':').append(parseObject(value));
@@ -217,5 +271,16 @@ public class JavaObjectTOJSONUtilsPlain {
         }
         sb.append('}');
         return sb;
+    }
+
+    /**
+     * 增加了对转义字符 \r\n\t 的支持
+     * 处理转义字符串
+     *
+     * @param string 需要处理的字符串
+     * @return 处理完成的字符串
+     */
+    private String processString(String string) {
+        return CommonUtils.replaceSpaceCharToVisibleChar(string).replaceAll("\"", "\\\\\"");
     }
 }

@@ -1,5 +1,6 @@
 package com.lovely3x.jsonparser.matcher;
 
+import com.lovely3x.jsonparser.Config;
 import com.lovely3x.jsonparser.model.JSONObject;
 import com.lovely3x.jsonparser.model.ObjectCreatorConfig;
 
@@ -11,16 +12,19 @@ import com.lovely3x.jsonparser.model.ObjectCreatorConfig;
  */
 public class MixMatcher implements JSONMatcher {
 
+    private static final String TAG = "MixMatcher";
     protected final AnnotationMatcher mAnnotationMatcher;
     protected final UnderlineMatcher mUnderlineMatcher;
+    private final Config mConfig;
 
-    public MixMatcher(UnderlineMatcher underlineMatcher, AnnotationMatcher annotationMatcher) {
+    public MixMatcher(Config config, UnderlineMatcher underlineMatcher, AnnotationMatcher annotationMatcher) {
         this.mUnderlineMatcher = underlineMatcher;
         this.mAnnotationMatcher = annotationMatcher;
+        this.mConfig = config;
     }
 
-    public MixMatcher() {
-        this(new UnderlineMatcher(), new AnnotationMatcher());
+    public MixMatcher(Config config) {
+        this(config, new UnderlineMatcher(config), new AnnotationMatcher(config));
     }
 
     @Override
@@ -33,11 +37,11 @@ public class MixMatcher implements JSONMatcher {
     }
 
     @Override
-    public void putValue(Object instance, JSONMatcher matcher, JSONObject jsonObject, ObjectCreatorConfig config) throws IllegalAccessException, ClassNotFoundException, InstantiationException {
+    public void putValue(Object instance, JSONObject jsonObject, ObjectCreatorConfig config) throws IllegalAccessException, ClassNotFoundException, InstantiationException {
         try {
-            mUnderlineMatcher.putValue(instance, matcher, jsonObject, config);
+            mUnderlineMatcher.putValue(instance, jsonObject, config);
         } catch (Exception e) {
-            mAnnotationMatcher.putValue(instance, matcher, jsonObject, config);
+            mAnnotationMatcher.putValue(instance, jsonObject, config);
         }
     }
 

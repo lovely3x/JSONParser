@@ -1,5 +1,6 @@
 package com.lovely3x.jsonparser.matcher;
 
+import com.lovely3x.jsonparser.Config;
 import com.lovely3x.jsonparser.JSONType;
 import com.lovely3x.jsonparser.TypeTable;
 import com.lovely3x.jsonparser.annotations.JSON;
@@ -17,6 +18,11 @@ import java.util.List;
 public class AnnotationMatcher implements JSONMatcher {
 
     private static final String TAG = "AnnotationMather";
+    private final Config mConfig;
+
+    public AnnotationMatcher(Config config) {
+        this.mConfig = config;
+    }
 
     @Override
     public ObjectCreatorConfig match(ObjectCreatorConfig newConfig) {
@@ -36,46 +42,46 @@ public class AnnotationMatcher implements JSONMatcher {
     }
 
     @Override
-    public void putValue(Object instance, JSONMatcher matcher,
-                         com.lovely3x.jsonparser.model.JSONObject jsonObject,
-                         ObjectCreatorConfig config) throws IllegalAccessException,
+    public void putValue(Object instance, com.lovely3x.jsonparser.model.JSONObject jsonObject,
+                         ObjectCreatorConfig objectConfig) throws IllegalAccessException,
             ClassNotFoundException,
             InstantiationException {
 
-        Field field = config.field;
-        switch (config.jsonValueType) {
+
+        Field field = objectConfig.field;
+        switch (objectConfig.jsonValueType) {
             case JSONType.JSON_TYPE_BOOLEAN:
-                field.setBoolean(instance, (Boolean) matcher.valueRule(jsonObject.getBoolean(config.jsonKey)));
+                field.setBoolean(instance, (Boolean) mConfig.matcher.valueRule(jsonObject.getBoolean(objectConfig.jsonKey)));
                 break;
             case JSONType.JSON_TYPE_INT:
-                field.setInt(instance, (Integer) matcher.valueRule(jsonObject.getInt(config.jsonKey)));
+                field.setInt(instance, (Integer) mConfig.matcher.valueRule(jsonObject.getInt(objectConfig.jsonKey)));
                 break;
             case JSONType.JSON_TYPE_LONG:
-                field.setLong(instance, (Long) matcher.valueRule(jsonObject.getLong(config.jsonKey)));
+                field.setLong(instance, (Long) mConfig.matcher.valueRule(jsonObject.getLong(objectConfig.jsonKey)));
                 break;
             case JSONType.JSON_TYPE_FLOAT:
-                field.setFloat(instance, (Float) matcher.valueRule(jsonObject.getFloat(config.jsonKey)));
+                field.setFloat(instance, (Float) mConfig.matcher.valueRule(jsonObject.getFloat(objectConfig.jsonKey)));
                 break;
             case JSONType.JSON_TYPE_DOUBLE:
-                field.setDouble(instance, (Double) matcher.valueRule(jsonObject.getDouble(config.jsonKey)));
+                field.setDouble(instance, (Double) mConfig.matcher.valueRule(jsonObject.getDouble(objectConfig.jsonKey)));
                 break;
             case JSONType.JSON_TYPE_STRING:
-                field.set(instance, matcher.valueRule(jsonObject.getString(config.jsonKey)));
+                field.set(instance, mConfig.matcher.valueRule(jsonObject.getString(objectConfig.jsonKey)));
                 break;
             case JSONType.JSON_TYPE_OBJECT:
-                Object subObject = createObject(config.fieldValueType);
+                Object subObject = createObject(objectConfig.fieldValueType);
                 if (subObject != null) {
-                    field.set(instance, matcher.valueRule(
-                            jsonObject.getJSONObject(config.jsonKey).
-                                    createObject(subObject.getClass(), matcher)));
+                    field.set(instance, mConfig.matcher.valueRule(
+                            jsonObject.getJSONObject(objectConfig.jsonKey).
+                                    createObject(subObject.getClass())));
                 }
                 break;
             case JSONType.JSON_TYPE_ARRAY:
                 //创建容器对象
-                Object container = createObject(config.fieldValueType);
-                Class subClass = Class.forName(config.subFieldValueType);
+                Object container = createObject(objectConfig.fieldValueType);
+                Class subClass = Class.forName(objectConfig.subFieldValueType);
                 if (container != null) {
-                    field.set(instance, matcher.valueRule(jsonObject.getJSONArray(config.jsonKey).createObjects((Class<? extends List>) container.getClass(), subClass, matcher)));
+                    field.set(instance, mConfig.matcher.valueRule(jsonObject.getJSONArray(objectConfig.jsonKey).createObjects((Class<? extends List>) container.getClass(), subClass)));
                 }
                 break;
         }

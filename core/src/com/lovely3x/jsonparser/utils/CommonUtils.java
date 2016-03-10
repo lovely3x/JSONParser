@@ -8,7 +8,13 @@ import com.lovely3x.jsonparser.JSONType;
  */
 public class CommonUtils {
 
-    public static final int guessType(String value) {
+    /**
+     * 猜测一个字符串的类型
+     *
+     * @param value 需要猜测的字符串
+     * @return 猜测的类型 {@link JSONType}
+     */
+    public static int guessType(String value) {
 
         int type = JSONType.JSON_TYPE_INVALIDATE;
         //无效的值
@@ -20,8 +26,6 @@ public class CommonUtils {
             type = JSONType.JSON_TYPE_ARRAY;
         } else if (value.startsWith("{") && value.endsWith("}")) {//json object
             type = JSONType.JSON_TYPE_OBJECT;
-        } else if (value.startsWith("\"") && value.endsWith("\"")) {//string
-            type = JSONType.JSON_TYPE_STRING;
         } else if (value.matches("^[\\+|\\-]?\\d+\\.\\d+([e|E]{1}[\\+|\\-]?\\d+)?$")) {//浮点数匹配
             if (Double.parseDouble(value) > Float.MAX_VALUE / 2) {
                 type = JSONType.JSON_TYPE_DOUBLE;//double float
@@ -38,7 +42,61 @@ public class CommonUtils {
             type = JSONType.JSON_TYPE_BOOLEAN;
         } else if (value.matches("^null$")) {
             type = JSONType.JSON_TYPE_NULL;//null
+        } else {//string
+            type = JSONType.JSON_TYPE_STRING;
         }
         return type;
     }
+
+
+    /**
+     * 将tab键替换为 \t
+     *
+     * @param string 需要替换的字符串
+     * @return 替换完成的字符串
+     */
+    public static String replaceTab(String string) {
+        return string.replaceAll("\\t", "\\\\t");
+    }
+
+    /**
+     * 将回车键替换为 \r
+     *
+     * @param string 需要替换的字符串
+     * @return 替换完成的字符串
+     */
+    public static String replaceEnter(String string) {
+        return string.replaceAll("\\r", "\\\\r");
+    }
+
+    /**
+     * 将换行键替换为 \n
+     *
+     * @param string 需要替换的字符串
+     * @return 替换完成的字符串
+     */
+    public static String replaceNewLine(String string) {
+        return string.replaceAll("\\n", "\\\\n");
+    }
+
+    /**
+     * 替换特殊的空白字符为可见字符
+     *
+     * @param string 需要替换的字符串
+     * @return 替换完成的字符串
+     */
+    public static String replaceSpaceCharToVisibleChar(String string) {
+        return replaceNewLine(replaceEnter(replaceTab(string)));
+    }
+
+    /**
+     * 替换可见的特殊字符标记为不可见的空白字符
+     *
+     * @param string 需要替换的字符
+     * @return 替换完成的字符
+     */
+    public static String replaceVisibleChatToInvisibleSpaceChar(String string) {
+        return string.replaceAll("\\\\t", "\t").replaceAll("\\\\r", "\r").replaceAll("\\\\n", "\n");
+    }
+
 }

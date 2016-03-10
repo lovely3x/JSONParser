@@ -1,8 +1,10 @@
 package com.lovely3x.jsonparser.matcher;
 
+import com.lovely3x.jsonparser.Config;
 import com.lovely3x.jsonparser.JSONType;
 import com.lovely3x.jsonparser.TypeTable;
 import com.lovely3x.jsonparser.model.JSONKey;
+import com.lovely3x.jsonparser.model.JSONObject;
 import com.lovely3x.jsonparser.model.ObjectCreatorConfig;
 
 import java.lang.reflect.Field;
@@ -13,11 +15,17 @@ import java.lang.reflect.Field;
  * Created by lovely3x on 15-7-1.
  */
 public class UnderlineMatcher implements JSONMatcher {
+
     private static final String TAG = "UnderlineMatcher";
     /**
      * 匹配 关键字 下划线
      */
     public final char MATCH_KEYWORDS = '_';
+    private final Config mConfig;
+
+    public UnderlineMatcher(Config config) {
+        this.mConfig = config;
+    }
 
     @Override
     public ObjectCreatorConfig match(ObjectCreatorConfig newConfig) {
@@ -66,28 +74,27 @@ public class UnderlineMatcher implements JSONMatcher {
     }
 
     @Override
-    public void putValue(Object instance, JSONMatcher matcher,
-                         com.lovely3x.jsonparser.model.JSONObject jsonObject,
+    public void putValue(Object instance, JSONObject jsonObject,
                          ObjectCreatorConfig config) throws IllegalAccessException {
         Field field = config.field;
         switch (config.jsonValueType) {
             case JSONType.JSON_TYPE_BOOLEAN:
-                field.setBoolean(instance, (Boolean) matcher.valueRule(jsonObject.getBoolean(config.jsonKey)));
+                field.setBoolean(instance, (Boolean) mConfig.matcher.valueRule(jsonObject.getBoolean(config.jsonKey)));
                 break;
             case JSONType.JSON_TYPE_INT:
-                field.setInt(instance, (Integer) matcher.valueRule(jsonObject.getInt(config.jsonKey)));
+                field.setInt(instance, (Integer) mConfig.matcher.valueRule(jsonObject.getInt(config.jsonKey)));
                 break;
             case JSONType.JSON_TYPE_LONG:
-                field.setLong(instance, (Long) matcher.valueRule(jsonObject.getLong(config.jsonKey)));
+                field.setLong(instance, (Long) mConfig.matcher.valueRule(jsonObject.getLong(config.jsonKey)));
                 break;
             case JSONType.JSON_TYPE_FLOAT:
-                field.setFloat(instance, (Float) matcher.valueRule(jsonObject.getFloat(config.jsonKey)));
+                field.setFloat(instance, (Float) mConfig.matcher.valueRule(jsonObject.getFloat(config.jsonKey)));
                 break;
             case JSONType.JSON_TYPE_DOUBLE:
-                field.setDouble(instance, (Double) matcher.valueRule(jsonObject.getDouble(config.jsonKey)));
+                field.setDouble(instance, (Double) mConfig.matcher.valueRule(jsonObject.getDouble(config.jsonKey)));
                 break;
             case JSONType.JSON_TYPE_STRING:
-                field.set(instance, matcher.valueRule(jsonObject.getString(config.jsonKey)));
+                field.set(instance, mConfig.matcher.valueRule(jsonObject.getString(config.jsonKey)));
                 break;
             case JSONType.JSON_TYPE_OBJECT:
                 throw new IllegalStateException("需要创建json对象,但是是不被UnderlineMatcher支持的");

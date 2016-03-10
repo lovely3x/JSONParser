@@ -1,6 +1,5 @@
 package com.lovely3x.jsonparser.objectcreator;
 
-import com.lovely3x.jsonparser.matcher.JSONMatcher;
 import com.lovely3x.jsonparser.model.JSONObject;
 
 /**
@@ -15,7 +14,7 @@ public interface ObjectCreator<T> {
      * @param t          需要转换的目标对象类
      * @return 创建的类对象
      */
-    T create(JSONObject jsonObject, Class<T> t, JSONMatcher matcher);
+    T create(JSONObject jsonObject, Class<T> t);
 
 
 }

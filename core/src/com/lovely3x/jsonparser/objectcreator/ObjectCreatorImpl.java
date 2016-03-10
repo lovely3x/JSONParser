@@ -1,8 +1,8 @@
 package com.lovely3x.jsonparser.objectcreator;
 
+import com.lovely3x.jsonparser.Config;
 import com.lovely3x.jsonparser.JSONType;
 import com.lovely3x.jsonparser.log.Log;
-import com.lovely3x.jsonparser.matcher.JSONMatcher;
 import com.lovely3x.jsonparser.model.JSONKey;
 import com.lovely3x.jsonparser.model.JSONObject;
 import com.lovely3x.jsonparser.model.ObjectCreatorConfig;
@@ -17,32 +17,34 @@ import java.util.ArrayList;
 public class ObjectCreatorImpl<T> implements ObjectCreator<T> {
 
     private static final String TAG = "ObjectCreatorImpl";
+    private final Config mConfig;
+
+    public ObjectCreatorImpl(Config config) {
+        this.mConfig = config;
+    }
 
     @Override
-    public T create(JSONObject jsonObject, Class<T> t, JSONMatcher matcher) {
+    public T create(JSONObject jsonObject, Class<T> t) {
         ArrayList<JSONKey> keys = new ArrayList<>(jsonObject.keySet());
         Field[] fields = t.getDeclaredFields();
 
         final int jsonKeyCount = keys.size();
-        final int fieldCount = fields.length;
 
         ObjectCreatorConfig config = new ObjectCreatorConfig();
         try {
             Object object = Class.forName(t.getName()).newInstance();
             for (int i = 0; i < jsonKeyCount; i++) {
                 config.reset();
-                JSONKey key = keys.get(i);
-                config.jsonKey = key;
-                for (int j = 0; j < fieldCount; j++) {
-                    Field field = fields[j];
+                config.jsonKey = keys.get(i);
+                for (Field field : fields) {
                     field.setAccessible(true);
                     config.field = field;
                     config.isEqual = false;
                     config.jsonValueType = JSONType.JSON_TYPE_INVALIDATE;
-                    ObjectCreatorConfig tem = matcher.match(config);
+                    ObjectCreatorConfig tem = mConfig.matcher.match(config);
                     if (tem != null && tem.isEqual) {
                         try {
-                            matcher.putValue(object, matcher, jsonObject, tem);
+                            mConfig.matcher.putValue(object, jsonObject, tem);
                         } catch (Exception e) {
                             Log.e(TAG, e);
                         }
@@ -50,11 +52,7 @@ public class ObjectCreatorImpl<T> implements ObjectCreator<T> {
                 }
             }
             return (T) object;
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        } catch (InstantiationException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return null;

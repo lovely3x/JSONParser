@@ -1,7 +1,7 @@
 package com.simple.gui;
 
+import com.lovely3x.jsonparser.Config;
 import com.lovely3x.jsonparser.JSONType;
-import com.lovely3x.jsonparser.model.JSONArray;
 import com.lovely3x.jsonparser.model.JSONValueImpl;
 
 import javax.swing.*;
@@ -25,6 +25,7 @@ public class GUIMain extends JFrame {
     public static final int WIDTH = 500;
 
     public static final int HEIGHT = 700;
+    private static final String TAG = "GUIMain";
 
     private TextArea textAreaContent;
 
@@ -65,7 +66,7 @@ public class GUIMain extends JFrame {
                 if (!text.trim().isEmpty()) {
                     String path = showFileChoiceDialog(GUIMain.this);
                     if (path != null) {
-                        JSONValueImpl value = new JSONValueImpl(text);
+                        JSONValueImpl value = new JSONValueImpl(Config.createDefault(), text);
                         switch (value.guessType()) {
                             case JSONType.JSON_TYPE_OBJECT:
                                 File f = new File(path);
@@ -106,7 +107,7 @@ public class GUIMain extends JFrame {
             @Override
             public void actionPerformed(ActionEvent arg0) {
                 String text = textAreaContent.getText();
-                JSONValueImpl value = new JSONValueImpl(text);
+                JSONValueImpl value = new JSONValueImpl(Config.createDefault(), text);
                 String formatted = null;
                 switch (value.guessType()) {
                     case JSONType.JSON_TYPE_OBJECT:
@@ -154,8 +155,19 @@ public class GUIMain extends JFrame {
 
     public static void main(String[] args) {
         //gui程序
-        //new GUIMain();
-        System.out.println(new JSONArray("[\"12\"]").getInt(0));
+        new GUIMain();
+    }
+
+
+    public static class Test {
+        private long time;
+
+        @Override
+        public String toString() {
+            return "Test{" +
+                    "time=" + time +
+                    '}';
+        }
     }
 
 

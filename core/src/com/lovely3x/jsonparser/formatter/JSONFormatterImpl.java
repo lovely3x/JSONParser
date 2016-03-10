@@ -1,10 +1,12 @@
 package com.lovely3x.jsonparser.formatter;
 
+import com.lovely3x.jsonparser.Config;
 import com.lovely3x.jsonparser.JSONType;
 import com.lovely3x.jsonparser.model.JSONArray;
 import com.lovely3x.jsonparser.model.JSONKey;
 import com.lovely3x.jsonparser.model.JSONObject;
 import com.lovely3x.jsonparser.model.JSONValue;
+import com.lovely3x.jsonparser.utils.CommonUtils;
 
 import java.util.ArrayList;
 
@@ -14,6 +16,8 @@ import java.util.ArrayList;
  */
 public class JSONFormatterImpl implements JSONFormatter {
 
+    private final Config mConfig;
+    private boolean mInvisibleSpaceChar;
     /**
      * 缩进符号
      */
@@ -28,8 +32,8 @@ public class JSONFormatterImpl implements JSONFormatter {
      *
      * @param block 缩进符号
      */
-    public JSONFormatterImpl(String block) {
-        this(block, "\n");
+    public JSONFormatterImpl(Config config, String block) {
+        this(config, block, "\n");
     }
 
     /**
@@ -38,16 +42,38 @@ public class JSONFormatterImpl implements JSONFormatter {
      * @param block   缩进符号
      * @param newLine 换行符号
      */
-    public JSONFormatterImpl(String block, String newLine) {
+    public JSONFormatterImpl(Config config, String block, String newLine) {
+        this(config, block, newLine, false);
+    }
+
+    /**
+     * 使用指定的的换行符和指定的缩进符号进行创建格式化对象
+     *
+     * @param block              缩进符号
+     * @param newLine            换行符号
+     * @param invisibleSpaceChar 是否让可见空白字符变为不可见例如 \t 会变为 看不见的留白,默认关闭
+     */
+    public JSONFormatterImpl(Config config, String block, String newLine, boolean invisibleSpaceChar) {
         this.block = block;
         this.newLine = newLine;
+        this.mInvisibleSpaceChar = invisibleSpaceChar;
+        this.mConfig = config;
+    }
+
+    /**
+     * 使用默认的四个空格键作为分隔符号和默认的换行符号进行创建格式化对象
+     *
+     * @param invisibleSpaceChar 是否让可见空白字符变为不可见例如 \t 会变为 看不见的留白,默认开启
+     */
+    public JSONFormatterImpl(Config config, boolean invisibleSpaceChar) {
+        this(config, "    ", "\n", invisibleSpaceChar);
     }
 
     /**
      * 使用默认的四个空格键作为分隔符号和默认的换行符号
      */
-    public JSONFormatterImpl() {
-        this("    ");
+    public JSONFormatterImpl(Config config) {
+        this(config, "    ");
     }
 
     @Override
@@ -97,7 +123,7 @@ public class JSONFormatterImpl implements JSONFormatter {
                 case JSONType.JSON_TYPE_STRING://
                     sb.append(newLine);
                     sb.append(addSpace(level)).append(block);
-                    sb.append('"').append(key.getKey()).append('"').append(' ').append(':').append(' ').append('"').append(value.getString().trim()).append('"').append(i + 1 == count ? "" : ",");
+                    sb.append('"').append(key.getKey()).append('"').append(' ').append(':').append(' ').append('"').append(processString(value)).append('"').append(i + 1 == count ? "" : ",");
                     break;
                 case JSONType.JSON_TYPE_NULL://null
                     sb.append(newLine);
@@ -166,7 +192,7 @@ public class JSONFormatterImpl implements JSONFormatter {
                 case JSONType.JSON_TYPE_STRING://
                     sb.append(newLine);
                     sb.append(addSpace(level)).append(block);
-                    sb.append('"').append(value.getString()).append('"').append(i + 1 == count ? "" : ",");
+                    sb.append('"').append(processString(value)).append('"').append(i + 1 == count ? "" : ",");
                     break;
                 case JSONType.JSON_TYPE_NULL://null
                     sb.append(newLine);
@@ -177,4 +203,39 @@ public class JSONFormatterImpl implements JSONFormatter {
         }
         return sb;
     }
+
+    /**
+     * 这个就是处理是否开启空白字符转换开的作用实现方法
+     * JSON字符串不能存在不可见换行符
+     * <p/>
+     * 这个起始是考虑GUI界面处理的问题
+     * GUI界面应该是是不能删除 \" 中的 \ 的,但是,在代码中获取时需要删除的
+     * GUI为什么不能删除?因为在GUI界面中,用户可以随时改变字符串的的内容,也就是我们在格式化时,其实取的就是文本输入框中的内容
+     * 但是假设我们删除了的话,那么这个内容就和输入时不一样了(不仅仅是变得漂流了,而是格式变化了,可以说不是一个规范的JSON串了)
+     * 所以我们在GUI中就不能打开这个选项
+     *
+     * @param value 需要处理的值
+     * @return 处理完的字符串
+     */
+    private String processString(JSONValue value) {
+        if (true) return value.getString();
+        String str = value.getValue();
+        StringBuilder sb = new StringBuilder(str);
+        if (str.startsWith("\"") && str.endsWith("\"")) {
+            sb.deleteCharAt(0);
+            sb.deleteCharAt(sb.length() - 1);
+        }
+        str = sb.toString();
+        if (mInvisibleSpaceChar) {
+            str = sb.toString();
+            str = CommonUtils.replaceVisibleChatToInvisibleSpaceChar(str);
+            str = str.replaceAll("\\\\\"", "\"");
+        } else {
+            //JSON字符串不能存在不可见换行符
+            str = str.replaceAll("\\r", "\\\r").replaceAll("\\n", "\\\n").replaceAll("\\t", "\\\t");
+        }
+        return str;
+    }
+
+
 }

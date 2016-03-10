@@ -37,7 +37,7 @@ public class JSONType {
      */
     public static final int JSON_TYPE_BOOLEAN = 0x6;
     /**
-     * String的类型 单精度浮点型型,代表元素并不指代json格式
+     * String的类型 代表元素并不指代json格式
      */
     public static final int JSON_TYPE_STRING = 0x7;
 

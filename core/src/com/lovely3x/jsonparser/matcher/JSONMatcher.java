@@ -22,11 +22,10 @@ public interface JSONMatcher {
      * 通过这个方法给这个配置中的字段通过 实例赋值
      *
      * @param instance   实例
-     * @param config     配置文件
-     * @param matcher    匹配器
      * @param jsonObject jsonObject 对象
+     * @param config     配置文件
      */
-    void putValue(Object instance, JSONMatcher matcher, JSONObject jsonObject, ObjectCreatorConfig config) throws IllegalAccessException, ClassNotFoundException, InstantiationException;
+    void putValue(Object instance, JSONObject jsonObject, ObjectCreatorConfig config) throws IllegalAccessException, ClassNotFoundException, InstantiationException;
 
     /**
      * value 转换原则

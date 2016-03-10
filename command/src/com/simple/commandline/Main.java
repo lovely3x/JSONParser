@@ -1,5 +1,6 @@
 package com.simple.commandline;
 
+import com.lovely3x.jsonparser.Config;
 import com.lovely3x.jsonparser.JSONType;
 import com.lovely3x.jsonparser.formatter.JSONFormatterImpl;
 import com.lovely3x.jsonparser.log.Log;
@@ -138,8 +139,9 @@ public class Main {
             }
         }
 
+        Config config = Config.createDefault();
         if (source != null) {
-            JSONValue value = new JSONValueImpl(source.input());
+            JSONValue value = new JSONValueImpl(config, source.input());
             String block = DEFAULT_BLOCK;
             if (list.contains(BLOCK)) {
                 int index = list.indexOf(BLOCK);
@@ -151,10 +153,10 @@ public class Main {
             String formatResult = null;
             switch (value.guessType()) {
                 case JSONType.JSON_TYPE_OBJECT:
-                    formatResult = value.getJSONObject().format(new JSONFormatterImpl(block));
+                    formatResult = value.getJSONObject().format();
                     break;
                 case JSONType.JSON_TYPE_ARRAY:
-                    formatResult = value.getJSONArray().format(new JSONFormatterImpl(block));
+                    formatResult = value.getJSONArray().format(new JSONFormatterImpl(config, block));
                     break;
             }
             if (formatResult != null) {
@@ -245,7 +247,7 @@ public class Main {
             }
 
             if (outFile == null) outFile = new File(DEFAULT_CLASS_NAME);
-            JSONValue value = new JSONValueImpl(source.input());
+            JSONValue value = new JSONValueImpl(Config.createDefault(), source.input());
 
             ByteArrayOutputStream baos = null;
 
@@ -330,7 +332,7 @@ public class Main {
         sb.append("\n").append("如果你需要格式化json字符串,你可以这样做 %s [%s] [%s] ");
         sb.append("\n代表什么 ? \n").append(" %s 表示是对json进行格式化,这时我们需要数据源\n %s 制定数据源为文件");
         sb.append("\n").append(" %s 表示输出到什么地方,如果未指定,则直接输出到控制台.");
-        sb.append("\n").append(" 举个例子 %s %s /data/home/lovely3x/json.txt %s /data/home/lovely3x/json_format.txt");
+        sb.append("\n").append(" 举个例子 %s %s /data/home/lovely3x/json2.txt %s /data/home/lovely3x/json_format.txt");
         sb.append("\n").append(" 另外你还可以通过 %s 来指定格式化时使用的缩进符号,默认使用的四个空格");
         sb.append("\n\n");
         sb.append("2,通过json对象生成java文件(-c)\n");

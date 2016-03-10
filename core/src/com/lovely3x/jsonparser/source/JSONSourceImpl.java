@@ -49,8 +49,12 @@ public class JSONSourceImpl implements JSONSource {
      *
      * @param buf
      */
-    public JSONSourceImpl(byte[] buf) throws UnsupportedEncodingException {
-        this.input = new String(buf, DEFAULT_CHARSET);
+    public JSONSourceImpl(byte[] buf) {
+        try {
+            this.input = new String(buf, DEFAULT_CHARSET);
+        } catch (UnsupportedEncodingException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**
@@ -93,28 +97,7 @@ public class JSONSourceImpl implements JSONSource {
         this.input = streamToString(stream, charset, true);
     }
 
-    /**
-     * 就爱那个输入流转换为string
-     *
-     * @param stream  需要转换的流
-     * @param charset 制定的字符编码集
-     * @return 转换好的string
-     */
-    private String streamToString(InputStream stream, String charset, boolean unicodeDecode) throws IOException {
-
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        byte[] buf = new byte[1024 * 8];
-        int len = -1;
-        while ((len = stream.read(buf)) != -1) {
-            baos.write(buf, 0, len);
-        }
-        baos.flush();
-        String str = new String(baos.toByteArray(), charset);
-        baos.close();
-        return unicodeDecode ? unicodeDecode(new StringBuilder(str)) : str;
-    }
-
-    public static final String unicodeDecode(StringBuilder sb) {
+    public static String unicodeDecode(StringBuilder sb) {
         Pattern pattern = Pattern.compile("\\\\u.{4}");
         Matcher matcher = pattern.matcher(sb.toString());
         int len = 0;
@@ -171,6 +154,26 @@ public class JSONSourceImpl implements JSONSource {
         return (char) Integer.parseInt(hex.substring(2), 16);
     }
 
+    /**
+     * 就爱那个输入流转换为string
+     *
+     * @param stream  需要转换的流
+     * @param charset 制定的字符编码集
+     * @return 转换好的string
+     */
+    private String streamToString(InputStream stream, String charset, boolean unicodeDecode) throws IOException {
+
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        byte[] buf = new byte[1024 * 8];
+        int len = -1;
+        while ((len = stream.read(buf)) != -1) {
+            baos.write(buf, 0, len);
+        }
+        baos.flush();
+        String str = new String(baos.toByteArray(), charset);
+        baos.close();
+        return unicodeDecode ? unicodeDecode(new StringBuilder(str)) : str;
+    }
 
     @Override
     public String input() {

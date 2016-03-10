@@ -1,5 +1,7 @@
 package com.lovely3x.jsonparser.objectcreator;
 
+import com.lovely3x.common.utils.CommonUtils;
+import com.lovely3x.jsonparser.Config;
 import com.lovely3x.jsonparser.JSONType;
 import com.lovely3x.jsonparser.log.Log;
 import com.lovely3x.jsonparser.matcher.JSONMatcher;
@@ -8,7 +10,6 @@ import com.lovely3x.jsonparser.model.JSONObject;
 import com.lovely3x.jsonparser.model.ObjectCreatorConfig;
 
 import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 
 /**
@@ -19,6 +20,7 @@ import java.util.ArrayList;
 public class SuperObjectCreator<T> implements ObjectCreator {
 
     private static final String TAG = "SuperObjectCreator";
+    private final Config mConfig;
 
     /**
      * 是否迭代父类的字段集
@@ -26,19 +28,13 @@ public class SuperObjectCreator<T> implements ObjectCreator {
     private boolean iteratorSuperFields;
 
     /**
-     * 默认迭代父类的字段集
-     */
-    public SuperObjectCreator() {
-        this(true);
-    }
-
-    /**
      * 是否迭代父类的字段
      *
      * @param iteratorSuperFields true 表示迭代父类的字段集,false 则表示不迭代
      */
-    public SuperObjectCreator(boolean iteratorSuperFields) {
+    public SuperObjectCreator(Config config, boolean iteratorSuperFields) {
         this.iteratorSuperFields = iteratorSuperFields;
+        this.mConfig = config;
     }
 
     /**
@@ -48,7 +44,7 @@ public class SuperObjectCreator<T> implements ObjectCreator {
      * @return true 或 false
      */
     protected boolean canModify(Field field) {
-        return field != null && ((field.getModifiers() & Modifier.FINAL) == 0);
+        return CommonUtils.fieldCanBeModify(field);
     }
 
     /**
@@ -67,18 +63,18 @@ public class SuperObjectCreator<T> implements ObjectCreator {
     }
 
     @Override
-    public T create(JSONObject jsonObject, Class t, JSONMatcher matcher) {
+    public T create(JSONObject jsonObject, Class t) {
 
         Object instance = createInstance(t);
         if (instance == null) return null;
 
         Class tmp = t.getSuperclass();
         while (tmp != null && !Object.class.getName().equals(tmp.getName())) {
-            process(jsonObject, tmp, instance, matcher);
+            process(jsonObject, tmp, instance);
             tmp = tmp.getSuperclass();
         }
 
-        process(jsonObject, t, instance, matcher);
+        process(jsonObject, t, instance);
 
         return (T) instance;
     }
@@ -90,12 +86,11 @@ public class SuperObjectCreator<T> implements ObjectCreator {
      * @param jsonObject 需要生成的jsonObject
      * @param t          当前字段查询类对象
      * @param instance   字段赋值执行实例
-     * @param matcher    jsonKey和类字段匹配器
      */
-    protected void process(JSONObject jsonObject, Class t, Object instance, JSONMatcher matcher) {
+    protected void process(JSONObject jsonObject, Class t, Object instance) {
         ArrayList<JSONKey> keys = new ArrayList<>(jsonObject.keySet());
         Field[] fields = t.getDeclaredFields();
-
+        JSONMatcher matcher = mConfig.matcher;
         ObjectCreatorConfig config = new ObjectCreatorConfig();
         try {
             for (JSONKey key : keys) {
@@ -111,7 +106,7 @@ public class SuperObjectCreator<T> implements ObjectCreator {
                     ObjectCreatorConfig tem = matcher.match(config);
                     if (tem != null && tem.isEqual) {
                         try {
-                            matcher.putValue(instance, matcher, jsonObject, tem);
+                            matcher.putValue(instance, jsonObject, tem);
                         } catch (Exception e) {
                             Log.e(TAG, e);
                         }

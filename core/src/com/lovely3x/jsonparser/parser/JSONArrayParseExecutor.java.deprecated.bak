@@ -36,37 +36,37 @@ public class JSONArrayParseExecutor {
         final int startPosition = sourceString.indexOf(String.valueOf(leftBoundSymbol)) + 1;
 
         //左方括弧栈
-        Stack<Character> leftSquareBracket = new Stack<>();
+        Stack leftSquareBracket = new Stack();
         //左花括弧栈
-        Stack<Character> leftCurlyBracket = new Stack<>();
+        Stack leftCurlyBracket = new Stack();
         //左方括弧下标栈
-        Stack<Integer> indexOfLeftSquareBracket = new Stack<>();
+        Stack indexOfLeftSquareBracket = new Stack();
         //左方括弧下标栈
-        Stack<Integer> indexOfLeftCurlyBracket = new Stack<>();
+        Stack indexOfLeftCurlyBracket = new Stack();
 
         //逗号下标栈
-        Stack<Integer> indexOfCommaStack = new Stack<>();
+        Stack indexOfCommaStack = new Stack();
         //逗号栈
-        Stack<Character> commaStack = new Stack<>();
+        Stack commaStack = new Stack();
 
         //右方括弧栈
-        Stack<Character> rightSquareBracket = new Stack<>();
+        Stack rightSquareBracket = new Stack();
         //右花括弧栈
-        Stack<Character> rightCurlyBracket = new Stack<>();
+        Stack rightCurlyBracket = new Stack();
         //右方括弧下标栈
-        Stack<Integer> indexOfRightSquareBracket = new Stack<>();
+        Stack indexOfRightSquareBracket = new Stack();
         //右花括弧下标栈
-        Stack<Integer> indexOfRightCurlyBracket = new Stack<>();
+        Stack indexOfRightCurlyBracket = new Stack();
 
         //转义字符栈下标栈
-        Stack<Integer> indexOfEscapeStack = new Stack<>();
+        Stack indexOfEscapeStack = new Stack();
         //转义字符栈
-        Stack<Character> escapeStack = new Stack<>();
+        Stack escapeStack = new Stack();
 
         //引号栈
-        Stack<Character> quoteStack = new Stack<>();
+        Stack quoteStack = new Stack();
         //引号下标栈
-        Stack<Integer> indexOfQuoteStack = new Stack<>();
+        Stack indexOfQuoteStack = new Stack();
 
         //上一个操作字符
         char preOperatingCharacter = JSONStructuralType.STRUCTURAL_INVALIDATE;

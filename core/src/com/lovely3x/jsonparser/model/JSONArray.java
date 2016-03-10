@@ -1,17 +1,10 @@
 package com.lovely3x.jsonparser.model;
 
+import com.lovely3x.jsonparser.Config;
 import com.lovely3x.jsonparser.JSONType;
-import com.lovely3x.jsonparser.conversation.rule.JSONGenerateRule;
 import com.lovely3x.jsonparser.conversation.rule.JSONKeyGenerateRule;
 import com.lovely3x.jsonparser.conversation.rule.UnderlineJSONGenerateKeyRule;
 import com.lovely3x.jsonparser.formatter.JSONFormatter;
-import com.lovely3x.jsonparser.formatter.JSONFormatterImpl;
-import com.lovely3x.jsonparser.matcher.JSONMatcher;
-import com.lovely3x.jsonparser.matcher.UnderlineMatcher;
-import com.lovely3x.jsonparser.objectcreator.ObjectCreator;
-import com.lovely3x.jsonparser.objectcreator.ObjectCreatorImpl;
-import com.lovely3x.jsonparser.parser.JSONParser;
-import com.lovely3x.jsonparser.parser.JSONParserImpl;
 import com.lovely3x.jsonparser.source.JSONSource;
 import com.lovely3x.jsonparser.source.JSONSourceImpl;
 import com.lovely3x.jsonparser.source.ListJSONSource;
@@ -30,138 +23,63 @@ public class JSONArray {
      */
     private final JSONSource mSource;
 
-    /**
-     * 解析器
-     */
-    private final JSONParser mParser;
+    private final Config mConfig;
 
-    /**
-     * 键值对工厂
-     */
-    private final JSONPairFactory mFactory;
 
     /**
      * 解析的结果
      */
     private List<JSONValue> values;
 
-    /**
-     * 使用默认的解析器对数据源解析
-     *
-     * @param source 数据源
-     */
-    public JSONArray(JSONSource source) {
-        this(source, new JSONParserImpl(source));
-    }
-
-    /**
-     * 使用默认的数据源工具解析指定的字符串 提供 数据源服务
-     *
-     * @param source
-     */
-    public JSONArray(String source) {
-        this(new JSONSourceImpl(source));
-    }
-
-    /**
-     * 指定一个解析器,通过指定的解析器来解析数据源
-     *
-     * @param source 数据源
-     * @param parser 解析器
-     */
-    public JSONArray(JSONSource source, JSONParser parser) {
-        this(source, parser, new JSONPairFactoryImpl());
-    }
 
     /**
      * 通过指定的参数创建一个JSONArray对象
      *
-     * @param source  数据源
-     * @param parser  数据解析器
-     * @param factory 键值对工厂
+     * @param source 数据源
      */
-    public JSONArray(JSONSource source, JSONParser parser, JSONPairFactory factory) {
+    public JSONArray(JSONSource source, Config config) {
         this.mSource = source;
-        this.mParser = parser;
-        this.mFactory = factory;
+        this.mConfig = config;
         parse();
     }
 
-
-    /**
-     * 根据一个列表创建一个jsonArray
-     * 使用默认的创建规则(UnderlineJSONGenerateKeyRule)
-     *
-     * @param list 数据源
-     */
-    public JSONArray(List list) {
-        this(new ListJSONSource(list, new UnderlineJSONGenerateKeyRule()));
-    }
-
-
-    /**
-     * 根据一个列表和指定的规则
-     * 创建一个jsonArray
-     *
-     * @param list 需要创建的列表
-     * @param rule 规则
-     */
-    public JSONArray(List list, JSONGenerateRule rule) {
+    public JSONArray(List<Object> list, JSONKeyGenerateRule rule) {
         this(new ListJSONSource(list, rule));
     }
 
-    /**
-     * 通过指定需要创建的list和解析器来创建JSONArray
-     *
-     * @param list   数据源
-     * @param parser 解析器
-     */
-    public JSONArray(List list, JSONParser parser) {
-        this(new ListJSONSource(list, new UnderlineJSONGenerateKeyRule()), parser);
+    public JSONArray(List<Object> list) {
+        this(new ListJSONSource(list, new UnderlineJSONGenerateKeyRule()));
     }
 
-    /**
-     * 通过指定需要创建的list和解析器来创建JSONArray和生成规则
-     *
-     * @param list   数据源
-     * @param parser 解析器
-     * @param rule   生成规则
-     */
-    public JSONArray(List list, JSONParser parser, JSONKeyGenerateRule rule) {
-        this(new ListJSONSource(list, rule), parser);
+    public JSONArray(List<Object> list, JSONKeyGenerateRule rule, Config config) {
+        this(new ListJSONSource(list, rule), config);
+    }
+
+    public JSONArray(List<Object> list, Config config) {
+        this(new ListJSONSource(list, new UnderlineJSONGenerateKeyRule()), config);
     }
 
 
-    /**
-     * 通过指定需要创建的list和解析器和键值对工厂来创建JSONArray
-     *
-     * @param list    数据源
-     * @param parser  解析器
-     * @param factory 键值对工厂
-     */
-    public JSONArray(List list, JSONParser parser, JSONPairFactory factory) {
-        this(new ListJSONSource(list, new UnderlineJSONGenerateKeyRule()), parser, factory);
+    public JSONArray(JSONSource mSource) {
+        this(mSource, Config.createDefault());
     }
 
-
-    /**
-     * 通过指定的数据源和规则,解析器以及键值对工厂来创建JSONArray对象
-     *
-     * @param list    数据源
-     * @param rule    规则文件
-     * @param parser  解析器
-     * @param factory 键值对工厂
-     */
-    public JSONArray(List list, JSONGenerateRule rule, JSONParser parser, JSONPairFactory factory) {
-        this(new ListJSONSource(list, rule), parser, factory);
+    public JSONArray(String mSource) {
+        this(new JSONSourceImpl(mSource), Config.createDefault());
     }
+
+    public JSONArray(String mSource, Config config) {
+        this(new JSONSourceImpl(mSource), config);
+    }
+
 
     /**
      * 通过解析器解析
      */
     private void parse() {
-        if (this.mParser == null) throw new RuntimeException("jsonParser can be not null.");
-        this.values = mParser.parseJSONArray();
+        if (this.mConfig == null || mConfig.parser == null)
+            throw new RuntimeException("jsonParser can be not null.");
+        this.values = mConfig.parser.parseJSONArray(mSource);
     }
 
     public JSONObject getJSONOObject(int index) {
@@ -285,32 +203,31 @@ public class JSONArray {
         return values.get(index).getCastInt();
     }
 
+    /**
+     * <p/>
+     *
+     * @param clazz 需要创建的对象的 类对象
+     * @param <T>   创建的结果集合
+     */
+    public <T> List<T> createObjects(Class clazz) throws IllegalAccessException, InstantiationException {
+        return createObjects(ArrayList.class, clazz);
+    }
 
     /**
-     * 使用指定的对象创建器 和 匹配器 创建一个对象集合
-     * <p>
-     * 使用这个方法创建的对象是不存在对象依赖的,
-     * 它只能解析出单个对象中的基本类型和String 对于复合类型是没有办法解析的
-     * 也就是说如果 现在 一个 类中有一个字段是List 那么是没办法解析出这个List的
-     *
      * @param container 对象的容器
      * @param clazz     需要创建的对象的 类对象
-     * @param creator   对象创建器 用来创建类
-     * @param matcher   属性匹配器 用来对json和class的字段惊醒匹配
      * @param <T>       创建的结果集合
      */
-    public <T> List<T> createObjects(Class<? extends List> container, Class clazz, ObjectCreator<T> creator, JSONMatcher matcher) throws IllegalAccessException, InstantiationException {
-        final int count = values.size();
+    public <T> List<T> createObjects(Class<? extends List> container, Class clazz) throws IllegalAccessException, InstantiationException {
         List<Object> list = container.newInstance();
-        for (int i = 0; i < count; i++) {
-            JSONValue value = values.get(i);
+        for (JSONValue value : values) {
             switch (value.guessType()) {
                 case JSONType.JSON_TYPE_ARRAY:
                     break;
                 case JSONType.JSON_TYPE_OBJECT:
-                    T obj = value.getJSONObject().createObject(clazz, creator, matcher);
-                    //注意,我在这里判断了null的这种状况,也就是说,不支出创建一个null对象容器中去
-                    //因为在我日常的开发中,是基本没有用到 需要 null 这中情况的
+                    T obj = (T) value.getJSONObject().createObject(clazz);
+                    //注意,我在这里判断了null的这种状况,也就是说,不支持创建一个null对象容器中去
+                    //因为在我日常的开发中,是基本没有用到 需要 null 这种情况的
                     //反而是因为 list 中出现 null经常头疼
                     if (obj != null) list.add(obj);
                     break;
@@ -339,117 +256,6 @@ public class JSONArray {
         return (List<T>) list;
     }
 
-
-    /**
-     * 使用指定的对象创建器,类对象 和 默认的属性匹配器(UnderlineMatcher) 创建对象
-     * <p>
-     * 使用这个方法创建的对象是不存在对象依赖的,
-     * 它只能解析出单个对象中的基本类型和String 对于复合类型是没有办法解析的
-     * 也就是说如果 现在 一个 类中有一个字段是List 那么是没办法解析出这个List的
-     *
-     * @param clazz   需要创建的对象的 类对象
-     * @param creator 对象创建器 用来创建类
-     * @param <T>     创建的结果集合
-     */
-    public <T> List<T> createObjects(Class clazz, ObjectCreator<T> creator) throws InstantiationException, IllegalAccessException {
-        return createObjects(ArrayList.class, clazz, creator, new UnderlineMatcher());
-    }
-
-
-    /**
-     * 使用指定的默认的对象创建器(ObjectCreatorImpl) 和 指定的匹配器与类对象 创建一个对象集合
-     * <p>
-     * 使用这个方法创建的对象是不存在对象依赖的,
-     * 它只能解析出单个对象中的基本类型和String 对于复合类型是没有办法解析的
-     * 也就是说如果 现在 一个 类中有一个字段是List 那么是没办法解析出这个List的
-     *
-     * @param <T>     创建的结果集合
-     * @param clazz   需要创建的对象的 类对象
-     * @param matcher 属性匹配器 用来对json和class的字段惊醒匹配
-     */
-    public <T> List<T> createObjects(Class clazz, JSONMatcher matcher) throws InstantiationException, IllegalAccessException {
-        return createObjects(ArrayList.class, clazz, new ObjectCreatorImpl<T>(), matcher);
-    }
-
-    /**
-     * 使用指定的默认的对象创建器(ObjectCreatorImpl) 类对象 创建一个对象集合
-     * <p>
-     * 使用这个方法创建的对象是不存在对象依赖的,
-     * 它只能解析出单个对象中的基本类型和String 对于复合类型是没有办法解析的
-     * 也就是说如果 现在 一个 类中有一个字段是List 那么是没办法解析出这个List的
-     *
-     * @param <T>   创建的结果集合
-     * @param clazz 需要创建的对象的 类对象
-     */
-    public <T> List<T> createObjects(Class clazz) throws InstantiationException, IllegalAccessException {
-        return createObjects(ArrayList.class, clazz, new ObjectCreatorImpl<T>(), new UnderlineMatcher());
-    }
-
-    /**
-     * Note: 如果使用这个方法的话,必要保证这个json数组中不存在 除基本类型外和String的其他类型对象,否则会抛出异常
-     * 因此,我给这个方法加上了 @Deprecated 只是提醒你需要注意罢了
-     * 使用指定的默认的对象创建器(ObjectCreatorImpl) 类对象 创建一个对象集合
-     * <p>
-     * 使用这个方法创建的对象是不存在对象依赖的,
-     * 它只能解析出单个对象中的基本类型和String 对于复合类型是没有办法解析的
-     * 也就是说如果 现在 一个 类中有一个字段是List 那么是没办法解析出这个List的
-     *
-     * @param <T> 创建的结果集合
-     */
-    @Deprecated
-    public <T> List<T> createObjects() throws InstantiationException, IllegalAccessException {
-        return createObjects(ArrayList.class, null, new ObjectCreatorImpl<T>(), new UnderlineMatcher());
-    }
-
-
-    /**
-     * 使用指定的对象创建器,类对象 和 默认的属性匹配器(UnderlineMatcher) 创建对象
-     * <p>
-     * 使用这个方法创建的对象是不存在对象依赖的,
-     * 它只能解析出单个对象中的基本类型和String 对于复合类型是没有办法解析的
-     * 也就是说如果 现在 一个 类中有一个字段是List 那么是没办法解析出这个List的
-     *
-     * @param container 对象的容器
-     * @param clazz     需要创建的对象的 类对象
-     * @param creator   对象创建器 用来创建类
-     * @param <T>       创建的结果集合
-     */
-    public <T> List<T> createObjects(Class<? extends List> container, Class clazz, ObjectCreator<T> creator) throws InstantiationException, IllegalAccessException {
-        return createObjects(container, clazz, creator, new UnderlineMatcher());
-    }
-
-
-    /**
-     * 使用指定的默认的对象创建器(ObjectCreatorImpl) 和 指定的匹配器与类对象 创建一个对象集合
-     * <p>
-     * 使用这个方法创建的对象是不存在对象依赖的,
-     * 它只能解析出单个对象中的基本类型和String 对于复合类型是没有办法解析的
-     * 也就是说如果 现在 一个 类中有一个字段是List 那么是没办法解析出这个List的
-     *
-     * @param container 对象的容器
-     * @param <T>       创建的结果集合
-     * @param clazz     需要创建的对象的 类对象
-     * @param matcher   属性匹配器 用来对json和class的字段惊醒匹配
-     */
-    public <T> List<T> createObjects(Class<? extends List> container, Class clazz, JSONMatcher matcher) throws InstantiationException, IllegalAccessException {
-        return createObjects(container, clazz, new ObjectCreatorImpl<T>(), matcher);
-    }
-
-    /**
-     * 使用指定的默认的对象创建器(ObjectCreatorImpl) 类对象 创建一个对象集合
-     * <p>
-     * 使用这个方法创建的对象是不存在对象依赖的,
-     * 它只能解析出单个对象中的基本类型和String 对于复合类型是没有办法解析的
-     * 也就是说如果 现在 一个 类中有一个字段是List 那么是没办法解析出这个List的
-     *
-     * @param container 对象的容器
-     * @param clazz     需要创建的对象的 类对象
-     * @param <T>       创建的结果集合
-     */
-    public <T> List<T> createObjects(Class<? extends List> container, Class clazz) throws InstantiationException, IllegalAccessException {
-        return createObjects(container, clazz, new ObjectCreatorImpl<T>(), new UnderlineMatcher());
-    }
-
     @Override
     public String toString() {
         return mSource.input();
@@ -461,7 +267,7 @@ public class JSONArray {
      * @return 格式化好的字符串
      */
     public String format() {
-        return format(new JSONFormatterImpl());
+        return format(mConfig.mFormatter);
     }
 
     /**

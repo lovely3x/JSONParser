@@ -1,5 +1,6 @@
 package com.lovely3x.jsonparser.parser;
 
+import com.lovely3x.jsonparser.Config;
 import com.lovely3x.jsonparser.model.JSONKey;
 import com.lovely3x.jsonparser.model.JSONPairFactory;
 import com.lovely3x.jsonparser.model.JSONPairFactoryImpl;
@@ -46,8 +47,8 @@ public class JSONObjectParser implements ParseExecutorCallback {
      *
      * @param source 指定的数据源
      */
-    public JSONObjectParser(JSONSource source) {
-        this(source, new JSONPairFactoryImpl());
+    public JSONObjectParser(Config config,JSONSource source) {
+        this(source, config.pairFactory);
     }
 
     /**

@@ -4,14 +4,12 @@ package com.lovely3x.jsonparser.model;
  * Created by lovely3x on 15-6-29.
  * 栈结构
  */
-public class Stack<T> {
+public class Stack {
 
     /**
      * 默认的数组增加增量因子
      */
     public static final float DEFAULT_FACTOR = 0.7f;
-
-    private static final String TAG = "Stack";
 
     private static final int DEFAULT_CAPACITY = 0x5;
 
@@ -21,14 +19,9 @@ public class Stack<T> {
     private float factor = DEFAULT_FACTOR;
 
     /**
-     * 锁对象
-     */
-    private Object lock = new Object();
-
-    /**
      * 栈结构
      */
-    private Object[] stack = new Object[1];
+    private int[] stack = new int[1];
 
     /**
      * 制定数组的初始容量
@@ -56,7 +49,7 @@ public class Stack<T> {
      */
     public Stack(float factor, int capacity) {
         this.factor = factor;
-        stack = new Object[capacity];
+        stack = new int[capacity];
         size = stack.length;
     }
 
@@ -83,11 +76,10 @@ public class Stack<T> {
      * @param index
      * @return
      */
-    public T get(int index) {
-        synchronized (lock) {
-            if (index < 0 || index > this.index) return null; //out of bounds
-            return (T) stack[index];
-        }
+    public int get(int index) {
+        if (index < 0 || index > this.index) return -1; //out of bounds
+        return stack[index];
+
     }
 
     public int size() {
@@ -99,14 +91,14 @@ public class Stack<T> {
      *
      * @param t
      */
-    public void push(T t) {
-        synchronized (lock) {
-            //如果容量不够
-            if (index + 1 >= size) {
-                addCapacity();
-            }
-            stack[index++] = t;
+    public void push(int t) {
+        // synchronized (lock) {
+        //如果容量不够
+        if (index + 1 >= size) {
+            addCapacity();
         }
+        stack[index++] = t;
+        //}
     }
 
     /**
@@ -114,10 +106,10 @@ public class Stack<T> {
      *
      * @return
      */
-    public T pop() {
-        synchronized (lock) {
-            return (T) stack[--index];
-        }
+    public int pop() {
+        //  synchronized (lock) {
+        return stack[--index];
+        //}
     }
 
     /**
@@ -126,14 +118,14 @@ public class Stack<T> {
     private void addCapacity() {
         int targetLength = (int) (size + (size * factor));
         if (targetLength <= stack.length) targetLength = stack.length + 1;
-        Object[] destArray = new Object[targetLength];
+        int[] destArray = new int[targetLength];
         System.arraycopy(stack, 0, destArray, 0, index);
         this.stack = destArray;
         size = destArray.length;
     }
 
     public void clear() {
-        stack = new Object[1];
+        stack = new int[1];
         index = 0;
         size = stack.length;
     }

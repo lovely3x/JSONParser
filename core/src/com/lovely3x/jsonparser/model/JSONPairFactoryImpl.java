@@ -1,5 +1,6 @@
 package com.lovely3x.jsonparser.model;
 
+import com.lovely3x.jsonparser.Config;
 import com.lovely3x.jsonparser.source.JSONSource;
 
 /**
@@ -8,14 +9,20 @@ import com.lovely3x.jsonparser.source.JSONSource;
  */
 public class JSONPairFactoryImpl implements JSONPairFactory {
 
+    private final Config mConfig;
+
+    public JSONPairFactoryImpl(Config config) {
+        this.mConfig = config;
+    }
+
     @Override
     public JSONValue getJSONValue(String value) {
-        return new JSONValueImpl(value);
+        return new JSONValueImpl(mConfig, value);
     }
 
     @Override
     public JSONKey getJSONKey(String key) {
-        return new JSONKeyImpl(key);
+        return new JSONKeyImpl(mConfig, key);
     }
 
     @Override

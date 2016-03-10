@@ -52,4 +52,16 @@ public class ObjectCreatorConfig {
         fieldValueType = JavaType.JAVA_TYPE_NULL;
         isEqual = false;
     }
+
+    @Override
+    public String toString() {
+        return "ObjectCreatorConfig{" +
+                "jsonKey=" + jsonKey +
+                ", field=" + field +
+                ", jsonValueType=" + jsonValueType +
+                ", fieldValueType='" + fieldValueType + '\'' +
+                ", subFieldValueType='" + subFieldValueType + '\'' +
+                ", isEqual=" + isEqual +
+                '}';
+    }
 }

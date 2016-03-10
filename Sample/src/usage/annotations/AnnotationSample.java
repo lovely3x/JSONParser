@@ -1,6 +1,6 @@
 package usage.annotations;
 
-import com.lovely3x.jsonparser.matcher.AnnotationMatcher;
+import com.lovely3x.jsonparser.Config;
 import com.lovely3x.jsonparser.model.JSONObject;
 import com.lovely3x.jsonparser.source.JSONSourceImpl;
 
@@ -76,7 +76,7 @@ public class AnnotationSample {
     private void makeObjectsByAnnotation(JSONObject object) {
         //可以从结果看出来,使用注解的方式可以不受服务端的字段名的约束
         //我们自己想要怎么命名我们自己的字段名就怎样命名
-        Book book = object.createObject(Book.class, new AnnotationMatcher());
+        Book book = object.createObject(Book.class);
         System.out.println("\n使用注解方式生成");
         System.out.println(book);
 
@@ -125,7 +125,7 @@ public class AnnotationSample {
 
     public JSONObject readJSONObject() {
         try {
-            return new JSONObject(new JSONSourceImpl(getClass().getResourceAsStream("../Book.json")));
+            return new JSONObject(new JSONSourceImpl(getClass().getResourceAsStream("../Book.json2")));
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -140,7 +140,7 @@ public class AnnotationSample {
      */
     public com.lovely3x.jsonparser.model.JSONArray readJSONArray() {
         try {
-            return new com.lovely3x.jsonparser.model.JSONArray(new JSONSourceImpl(getClass().getResourceAsStream("../Books.json")));
+            return new com.lovely3x.jsonparser.model.JSONArray(new JSONSourceImpl(getClass().getResourceAsStream("../Books.json2")), Config.createDefault());
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -154,7 +154,7 @@ public class AnnotationSample {
      */
     public JSONObject readAnnotationJSONObject() {
         try {
-            return new com.lovely3x.jsonparser.model.JSONObject(new JSONSourceImpl(getClass().getResourceAsStream("../BookAnnotation.json")));
+            return new com.lovely3x.jsonparser.model.JSONObject(new JSONSourceImpl(getClass().getResourceAsStream("../BookAnnotation.json2")));
         } catch (IOException e) {
             e.printStackTrace();
         }

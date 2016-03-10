@@ -1,5 +1,6 @@
 package usage.underline;
 
+import com.lovely3x.jsonparser.Config;
 import com.lovely3x.jsonparser.model.JSONObject;
 import com.lovely3x.jsonparser.source.JSONSourceImpl;
 import usage.annotations.Book;
@@ -82,7 +83,7 @@ public class UnderlineSample {
 
     public JSONObject readJSONObject() {
         try {
-            return new JSONObject(new JSONSourceImpl(getClass().getResourceAsStream("../Book.json")));
+            return new JSONObject(new JSONSourceImpl(getClass().getResourceAsStream("../Book.json2")));
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -97,7 +98,7 @@ public class UnderlineSample {
      */
     public com.lovely3x.jsonparser.model.JSONArray readJSONArray() {
         try {
-            return new com.lovely3x.jsonparser.model.JSONArray(new JSONSourceImpl(getClass().getResourceAsStream("../Books.json")));
+            return new com.lovely3x.jsonparser.model.JSONArray(new JSONSourceImpl(getClass().getResourceAsStream("../Books.json2")), Config.createDefault());
         } catch (IOException e) {
             e.printStackTrace();
         }

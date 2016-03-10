@@ -1,10 +1,13 @@
 package com.lovely3x.jsonparser.model;
 
+import com.lovely3x.jsonparser.Config;
+
 /**
  * json key 实现类
  * Created by lovely3x on 15-6-29.
  */
 public class JSONKeyImpl implements JSONKey {
+    private final Config mConfig;
     private String key;
 
     /**
@@ -12,8 +15,9 @@ public class JSONKeyImpl implements JSONKey {
      *
      * @param key
      */
-    public JSONKeyImpl(String key) {
+    public JSONKeyImpl(Config config, String key) {
         this.key = processKey(key);
+        this.mConfig = config;
     }
 
     /**

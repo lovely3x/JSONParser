@@ -1,5 +1,6 @@
 package com.lovely3x.jsonparser.model;
 
+import com.lovely3x.jsonparser.Config;
 import com.lovely3x.jsonparser.JSONType;
 import com.lovely3x.jsonparser.source.JSONSourceImpl;
 import com.lovely3x.jsonparser.utils.CommonUtils;
@@ -9,6 +10,9 @@ import com.lovely3x.jsonparser.utils.CommonUtils;
  * Created by lovely3x on 15-6-29.
  */
 public class JSONValueImpl implements JSONValue {
+
+
+    private final Config mConfig;
     /**
      * 保存value
      */
@@ -20,8 +24,9 @@ public class JSONValueImpl implements JSONValue {
      *
      * @param value
      */
-    public JSONValueImpl(String value) {
+    public JSONValueImpl(Config config, String value) {
         this.value = filter(value);
+        this.mConfig = config;
     }
 
     /**
@@ -54,17 +59,21 @@ public class JSONValueImpl implements JSONValue {
             sb.deleteCharAt(0);
             sb.deleteCharAt(sb.length() - 1);
         }
-        return sb.toString();
+        //修护了对转义字符 \r\n\t的支持
+        str = sb.toString();
+        str = CommonUtils.replaceVisibleChatToInvisibleSpaceChar(str);
+        str = str.replaceAll("\\\\\"", "\"");
+        return str;
     }
 
     @Override
     public JSONArray getJSONArray() {
-        return new JSONArray(new JSONSourceImpl(value));
+        return new JSONArray(new JSONSourceImpl(value), mConfig);
     }
 
     @Override
     public JSONObject getJSONObject() {
-        return new JSONObject(new JSONSourceImpl(value));
+        return new JSONObject(new JSONSourceImpl(value), mConfig);
     }
 
     @Override
@@ -165,4 +174,5 @@ public class JSONValueImpl implements JSONValue {
     public String toString() {
         return value;
     }
+
 }
