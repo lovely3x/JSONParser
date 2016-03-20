@@ -2,11 +2,13 @@ package com.lovely3x.jsonparser.matcher;
 
 import com.lovely3x.jsonparser.Config;
 import com.lovely3x.jsonparser.JSONType;
+import com.lovely3x.jsonparser.JavaType;
 import com.lovely3x.jsonparser.TypeTable;
 import com.lovely3x.jsonparser.annotations.JSON;
 import com.lovely3x.jsonparser.annotations.JSONArray;
 import com.lovely3x.jsonparser.annotations.JSONObject;
 import com.lovely3x.jsonparser.model.ObjectCreatorConfig;
+import com.lovely3x.jsonparser.utils.CommonUtils;
 
 import java.lang.reflect.Field;
 import java.util.List;
@@ -78,10 +80,14 @@ public class AnnotationMatcher implements JSONMatcher {
                 break;
             case JSONType.JSON_TYPE_ARRAY:
                 //创建容器对象
-                Object container = createObject(objectConfig.fieldValueType);
-                Class subClass = Class.forName(objectConfig.subFieldValueType);
-                if (container != null) {
-                    field.set(instance, mConfig.matcher.valueRule(jsonObject.getJSONArray(objectConfig.jsonKey).createObjects((Class<? extends List>) container.getClass(), subClass)));
+                if (!JavaType.JAVA_TYPE_NULL.equals(objectConfig.fieldValueType)) {
+                    Object container = createObject(objectConfig.fieldValueType);
+                    if (!JavaType.JAVA_TYPE_NULL.equals(objectConfig.subFieldValueType)) {
+                        Class subClass = Class.forName(objectConfig.subFieldValueType);
+                        if (container != null) {
+                            field.set(instance, mConfig.matcher.valueRule(jsonObject.getJSONArray(objectConfig.jsonKey).createObjects((Class<? extends List>) container.getClass(), subClass)));
+                        }
+                    }
                 }
                 break;
         }
@@ -139,11 +145,17 @@ public class AnnotationMatcher implements JSONMatcher {
             return newConfig;
         }
         if (newConfig.jsonKey != null && newConfig.jsonKey.getKey() != null) {
-            if (newConfig.jsonKey.getKey().equals(jsonArrayField.value())) {
+            if (newConfig.jsonKey.getKey().equals(jsonArrayField.value()) && !jsonArrayField.value().equals(JSONArray.NULL)) {
                 newConfig.isEqual = true;
                 newConfig.jsonValueType = JSONType.JSON_TYPE_ARRAY;
                 newConfig.fieldValueType = jsonArrayField.container().getName();
-                newConfig.subFieldValueType = jsonArrayField.object().getName();
+                //没有指定容器的泛型
+                if (jsonArrayField.object() == JSONArray.Non.class) {
+                    //获取泛型
+                    newConfig.subFieldValueType = CommonUtils.getFieldGenericType(newConfig.field, 0).getName();
+                } else {
+                    newConfig.subFieldValueType = jsonArrayField.object().getName();
+                }
             }
         } else {
             newConfig.isEqual = false;

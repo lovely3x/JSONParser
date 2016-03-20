@@ -6,6 +6,7 @@ import com.lovely3x.jsonparser.TypeTable;
 import com.lovely3x.jsonparser.model.JSONKey;
 import com.lovely3x.jsonparser.model.JSONObject;
 import com.lovely3x.jsonparser.model.ObjectCreatorConfig;
+import com.lovely3x.jsonparser.utils.CommonUtils;
 
 import java.lang.reflect.Field;
 
@@ -75,7 +76,7 @@ public class UnderlineMatcher implements JSONMatcher {
 
     @Override
     public void putValue(Object instance, JSONObject jsonObject,
-                         ObjectCreatorConfig config) throws IllegalAccessException {
+                         ObjectCreatorConfig config) throws IllegalAccessException, InstantiationException {
         Field field = config.field;
         switch (config.jsonValueType) {
             case JSONType.JSON_TYPE_BOOLEAN:
@@ -96,10 +97,20 @@ public class UnderlineMatcher implements JSONMatcher {
             case JSONType.JSON_TYPE_STRING:
                 field.set(instance, mConfig.matcher.valueRule(jsonObject.getString(config.jsonKey)));
                 break;
-            case JSONType.JSON_TYPE_OBJECT:
-                throw new IllegalStateException("需要创建json对象,但是是不被UnderlineMatcher支持的");
-            case JSONType.JSON_TYPE_ARRAY:
-                throw new IllegalStateException("需要创建jsonArray,但是是不被UnderlineMatcher支持的");
+            case JSONType.JSON_TYPE_OBJECT: {
+                Class<?> subClass = field.getType();
+                if (subClass != null) {
+                    field.set(instance, mConfig.matcher.valueRule(
+                            jsonObject.getJSONObject(config.jsonKey).
+                                    createObject(subClass)));
+                }
+            }
+            case JSONType.JSON_TYPE_ARRAY: {
+                Class subClass = CommonUtils.getFieldGenericType(field, 0);
+                field.set(instance, mConfig.matcher.valueRule(
+                        jsonObject.getJSONArray(config.jsonKey)
+                                .createObjects(mConfig.defaultJSONArrayContainer, subClass)));
+            }
         }
     }
 

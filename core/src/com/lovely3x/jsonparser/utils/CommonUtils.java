@@ -2,6 +2,10 @@ package com.lovely3x.jsonparser.utils;
 
 import com.lovely3x.jsonparser.JSONType;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+
 /**
  * Created by lovely3x on 15-8-8.
  * 放一些工具方法进来
@@ -99,4 +103,50 @@ public class CommonUtils {
         return string.replaceAll("\\\\t", "\t").replaceAll("\\\\r", "\r").replaceAll("\\\\n", "\n");
     }
 
+    /**
+     * 通过反射, 获得定义Class时声明的父类的泛型参数的类型. 如无法找到, 返回Object.class.
+     *
+     * @param clazz clazz The class to introspect
+     * @param index the Index of the generic ddeclaration,start from 0.
+     * @return the index generic declaration, or Object.class if cannot be
+     * determined
+     */
+    @SuppressWarnings("unchecked")
+    public static Class<Object> getSuperClassGenericType(final Class clazz, final int index) {
+
+        //返回表示此 Class 所表示的实体（类、接口、基本类型或 void）的直接超类的 Type。
+        Type genType = clazz.getGenericSuperclass();
+
+        if (!(genType instanceof ParameterizedType)) {
+            return Object.class;
+        }
+        //返回表示此类型实际类型参数的 Type 对象的数组。
+        Type[] params = ((ParameterizedType) genType).getActualTypeArguments();
+
+        if (index >= params.length || index < 0) {
+            return Object.class;
+        }
+        if (!(params[index] instanceof Class)) {
+            return Object.class;
+        }
+
+        return (Class) params[index];
+    }
+
+    /**
+     * 获取字段的泛型
+     *
+     * @param field 需要获取的子类
+     * @param index 泛型的下标
+     * @return
+     */
+    @SuppressWarnings("unchecked")
+    public static Class<Object> getFieldGenericType(Field field, int index) {
+        Type type = field.getGenericType();
+        if (type instanceof ParameterizedType) {
+            Type[] arguments = ((ParameterizedType) type).getActualTypeArguments();
+            return (Class) arguments[index];
+        }
+        return Object.class;
+    }
 }

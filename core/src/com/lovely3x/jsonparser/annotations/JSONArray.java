@@ -1,5 +1,7 @@
 package com.lovely3x.jsonparser.annotations;
 
+import com.lovely3x.jsonparser.JavaType;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -16,6 +18,18 @@ import java.util.List;
 public @interface JSONArray {
 
     /**
+     * 字段名为 null,这个在语法上是不成立所以用它来做未指定的标识
+     */
+    String NULL = JavaType.JAVA_TYPE_NULL;
+
+    /**
+     * 字段类型为Non 表示未指定类型
+     */
+    class Non {
+
+    }
+
+    /**
      * @return 存放对象的容器
      */
     Class<? extends List> container() default ArrayList.class;
@@ -25,14 +39,14 @@ public @interface JSONArray {
      *
      * @return
      */
-    Class object();
+    Class object() default Non.class;
 
     /**
      * jsonArray的字段名
      *
      * @return
      */
-    String value();
+    String value() default NULL;
 
 
     /**

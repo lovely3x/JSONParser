@@ -11,7 +11,7 @@ public class FileCodingTransition {
 
     public static final String NEW_ENCODING = "UTF-8";
 
-    public static final String PATH = "/home/lovely3x/Developer/java/FileManagerServers/src";
+    public static final String PATH = "/home/lovely3x/桌面/Lottery/src";
 
     /**
      * 匹配文件的正则表达式

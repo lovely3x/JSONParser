@@ -26,16 +26,15 @@ public class ObjectCreatorImpl<T> implements ObjectCreator<T> {
     @Override
     public T create(JSONObject jsonObject, Class<T> t) {
         ArrayList<JSONKey> keys = new ArrayList<>(jsonObject.keySet());
-        Field[] fields = t.getDeclaredFields();
 
-        final int jsonKeyCount = keys.size();
+        Field[] fields = t.getDeclaredFields();
 
         ObjectCreatorConfig config = new ObjectCreatorConfig();
         try {
             Object object = Class.forName(t.getName()).newInstance();
-            for (int i = 0; i < jsonKeyCount; i++) {
+            for (JSONKey key : keys) {
                 config.reset();
-                config.jsonKey = keys.get(i);
+                config.jsonKey = key;
                 for (Field field : fields) {
                     field.setAccessible(true);
                     config.field = field;

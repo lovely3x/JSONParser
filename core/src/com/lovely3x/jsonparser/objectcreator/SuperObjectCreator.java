@@ -55,7 +55,7 @@ public class SuperObjectCreator<T> implements ObjectCreator {
      */
     protected Object createInstance(Class clazz) {
         try {
-            return Class.forName(clazz.getName()).newInstance();
+            return clazz.newInstance();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -90,6 +90,7 @@ public class SuperObjectCreator<T> implements ObjectCreator {
     protected void process(JSONObject jsonObject, Class t, Object instance) {
         ArrayList<JSONKey> keys = new ArrayList<>(jsonObject.keySet());
         Field[] fields = t.getDeclaredFields();
+
         JSONMatcher matcher = mConfig.matcher;
         ObjectCreatorConfig config = new ObjectCreatorConfig();
         try {

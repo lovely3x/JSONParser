@@ -12,6 +12,9 @@ import com.lovely3x.jsonparser.objectcreator.ObjectCreator;
 import com.lovely3x.jsonparser.objectcreator.SuperObjectCreator;
 import org.json2.JSONParser;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * JSON 解析器的配置文件
  * Created by lovely3x on 16-3-10.
@@ -46,6 +49,12 @@ public class Config {
      * 格式化器
      */
     public JSONFormatter mFormatter;
+
+    /**
+     * 默认的json数组容器
+     */
+    public Class<? extends List> defaultJSONArrayContainer = ArrayList.class;
+
 
     public Config(JSONParser parser, JSONMatcher matcher, SuperObjectCreator creator, JSONPairFactory pairFactory, ClassCreator classCreator, JSONFormatter mFormatter) {
         this.parser = parser;

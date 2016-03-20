@@ -1,6 +1,9 @@
 package com.lovely3x.jsonparser;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * Created by lovely3x on 15-7-1.
@@ -18,7 +21,10 @@ public class TypeTable {
         typeTable.put("double", JSONType.JSON_TYPE_DOUBLE);
         typeTable.put("boolean", JSONType.JSON_TYPE_BOOLEAN);
         typeTable.put("java.lang.String", JSONType.JSON_TYPE_STRING);
-
+        typeTable.put("java.lang.String", JSONType.JSON_TYPE_STRING);
+        typeTable.put(List.class.getName(), JSONType.JSON_TYPE_ARRAY);
+        typeTable.put(LinkedList.class.getName(), JSONType.JSON_TYPE_ARRAY);
+        typeTable.put(ArrayList.class.getName(), JSONType.JSON_TYPE_ARRAY);
     }
 
     /**

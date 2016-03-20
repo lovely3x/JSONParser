@@ -43,19 +43,19 @@ public class JSONArray {
         parse();
     }
 
-    public JSONArray(List<Object> list, JSONKeyGenerateRule rule) {
+    public JSONArray(List<?> list, JSONKeyGenerateRule rule) {
         this(new ListJSONSource(list, rule));
     }
 
-    public JSONArray(List<Object> list) {
+    public JSONArray(List<?> list) {
         this(new ListJSONSource(list, new UnderlineJSONGenerateKeyRule()));
     }
 
-    public JSONArray(List<Object> list, JSONKeyGenerateRule rule, Config config) {
+    public JSONArray(List<?> list, JSONKeyGenerateRule rule, Config config) {
         this(new ListJSONSource(list, rule), config);
     }
 
-    public JSONArray(List<Object> list, Config config) {
+    public JSONArray(List<?> list, Config config) {
         this(new ListJSONSource(list, new UnderlineJSONGenerateKeyRule()), config);
     }
 
