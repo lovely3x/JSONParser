@@ -21,6 +21,6 @@ JSON解析无法发现JSON的语法错误,这就意味着你必须提供正确�
 
 [点击下载jar包](https://raw.githubusercontent.com/lovely3x/JSONParser/master/core/jar/core.jar)
 
-[点击下载GUI格式化,JavaBean生成工具](https://github.com/lovely3x/JSONParser/tree/master/GUI/GUI.jar)
+[点击下载GUI格式化,JavaBean生成工具](https://github.com/lovely3x/JSONParser/tree/master/GUI/jar/GUI.jar)
 
 ------------------------------------------------------------------
