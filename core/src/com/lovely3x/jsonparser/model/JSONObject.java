@@ -10,6 +10,7 @@ import com.lovely3x.jsonparser.source.MapJSONSource;
 import com.lovely3x.jsonparser.source.ObjectJSONSource;
 
 import java.io.OutputStream;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
@@ -87,8 +88,6 @@ public class JSONObject {
     }
 
 
-
-
     /**
      * 解析,如果是在解析情况下会自动调用
      * 但是如果是在将对象创建为json对象,则需要主动调用这个方法解析
@@ -96,6 +95,9 @@ public class JSONObject {
      */
     private void parse() {
         this.mPair = mConfig.parser.parseJSONObject(mSource);
+        if (mPair == null) {
+            mPair = new HashMap<>();
+        }
     }
 
     /**

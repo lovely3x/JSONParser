@@ -80,6 +80,7 @@ public class JSONArray {
         if (this.mConfig == null || mConfig.parser == null)
             throw new RuntimeException("jsonParser can be not null.");
         this.values = mConfig.parser.parseJSONArray(mSource);
+        this.values = values == null ? new ArrayList<JSONValue>() : values;
     }
 
     public JSONObject getJSONOObject(int index) {
